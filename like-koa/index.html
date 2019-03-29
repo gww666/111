@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+        // function A() {};
+        // let obj = new A();
+        let obj = {};
+        obj.__defineGetter__("test", () => {
+            return 5;
+        });
+        console.log(obj.test);
+        let obj2 = {
+            arr: [1, 2]
+        }
+        let obj3 = Object.create(obj2);
+        obj3.arr.push(4);
+        console.log(obj2);
+    </script>
+</body>
+</html>

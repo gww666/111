@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // console.log("");
+        let descriptor = {
+            enumerable: true,
+            configurable: true,
+            set() {},
+            get() {}
+        }
+        let obj = {
+            $options: {
+                data: {
+                    test: 1,
+                    log() {},
+                }
+            }
+        }
+        const proxy = (target, sourceKey, key) => {
+            descriptor.get = function () {
+                // console.log("get", this[sourceKey]);
+                // console.log("this", this);
+                return this[sourceKey][key];
+            }
+            descriptor.set = function (value) {
+                this[sourceKey][key] = value;
+            }
+            Object.defineProperty(target, key, descriptor);
+        }
+        const isReserved = key => {
+            return key && (key.charCodeAt(0) === 0x5f || key.charCodeAt(0) === 0x24);
+        }
+        const initData = () => {
+            let data = obj.$options.data;
+            obj._data = data;
+            const keys = Object.keys(data);
+            let i = keys.length;
+            while (i--) {
+                const key = keys[i];
+                if (!isReserved(key)) {
+                    console.log("开始代理");
+                    proxy(obj, "_data", key);
+                }
+            }
+            console.log(obj.test);
+            console.log(obj);
+        }
+
+        initData();
+        function Vue() {
+
+        }
+        Vue.a = 2;
+        let v = new Vue();
+        console.log("sss", v.constructor);
+        console.log("sss", v.a);
+        
+    </script>
+</body>
+</html>

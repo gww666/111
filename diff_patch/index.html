@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib.js"></script>
+</head>
+<body>
+    <script>
+        let diff = new diff_match_patch();
+        let oldText = "this is old text";
+        let newText = "this is new text!";
+        let result = diff.patch_make(oldText, newText);
+        let patchesForText = diff.patch_toText(result);
+        console.log("将patches转为字符串", patchesForText);
+        
+        console.log(result);
+        let mergeResult = diff.patch_apply(result, oldText);
+        console.log("打印mergeResult", mergeResult);
+        
+    </script>
+</body>
+</html>

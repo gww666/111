@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <meta http-equiv="Cache-Control" content="max-age=60000"/> -->
+    <title>Document</title>
+</head>
+<body>
+    <div>123</div>
+    <div class="info">这是新的html</div>
+    <script>
+        // "use strict";
+        let options = {
+            url: "http://127.0.0.1:3300/userinfo",
+            method: "get",
+            data: "",
+            headers: {
+                // "Cache-Control": "max-age=60"
+            }
+        }
+        let $ = (selector) => {
+            return document.querySelector(selector);
+        }
+        let ajax = options => {
+            return new Promise(resolve => {
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200 || xhr.status === 304) {
+                            resolve(xhr.responseText);
+                        }
+                    }
+                }
+                xhr.open(options.method, options.url);
+                if (options.headers && Object.keys(options.headers).length) {
+                    for (let key in options.headers) {
+                        xhr.setRequestHeader(key, options.headers[key]);
+                    }
+                }
+                xhr.send();
+            });
+        }
+        let getData = async () => {
+            let data = await ajax(options);
+            let div = $(".info");
+            div.innerHTML = data;
+        }
+        getData();
+        // let obj;
+        // function abc () {
+        //     this.a = 2;
+        //     obj = {
+        //         obj_a: this.a
+        //     }
+        // }
+        let test = function () {
+            console.log(this.a);
+        }
+        let obj = {
+            a: 2,
+            test
+        }
+        // let fn = test;
+        let fn = obj.test;
+        //默认绑定
+        fn();
+        //隐式绑定
+        obj.test();
+        //显示绑定
+        setTimeout(obj.test.bind(obj), 1000);
+        // let a = new abc();
+        // console.log(obj);
+        // let base_a = 1
+        // var obj = {
+        //     a: base_a,
+        //     b: obj.a + 1
+        // }
+        // console.log(obj);
+    </script>
+</body>
+</html>

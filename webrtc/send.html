@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>send</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            height: 100%;
+            width: 100%;
+        }
+        body {
+            display: flex;
+            align-items: center;
+        }
+        .local-box {
+            width: 100px;
+            height: 100px;
+            /* background: red; */
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+        #local {
+            width: 100%;
+            height: 100%;
+        }
+        .remote-box {
+            width: 100%;
+            height: 400px;
+            /* background: blue; */
+            position: relative;
+        }
+        #remote {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.16/peer.min.js"></script>
+</head>
+
+<body>
+    <div class="remote-box">
+        <video id="remote" autoplay></video>
+        <div class="local-box">
+            <video id="local" autoplay></video>
+        </div>
+    </div>
+    <script>
+        const peer = new Peer('sender', { host: '120.78.221.14', port: 9000, path: '/myapp' })
+        const startChat = async () => {
+            let localStream;
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                });
+                document.querySelector('video#local').srcObject = localStream
+                const call = peer.call('receiver', localStream)
+                call.on('stream', remoteStream => {
+                    document.querySelector('video#remote').srcObject = remoteStream
+                });
+            } catch (err) {
+                // console.log("err", JSON.stringify(err));
+                alert(JSON.stringify(err));
+                
+            }
+            // const localStream = await navigator.mediaDevices.getUserMedia({
+            //     video: true,
+            //     audio: true
+            // });
+            // document.querySelector('video#local').srcObject = localStream
+            // const call = peer.call('receiver', localStream)
+            // call.on('stream', remoteStream => {
+            //     document.querySelector('video#remote').srcObject = remoteStream
+            // });
+        }
+        startChat()
+    </script>
+</body>
+
+</html>

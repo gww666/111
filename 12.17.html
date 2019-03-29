@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" class="inp" />
+    <div class="content"></div>
+    <script>
+        let $ = (selector) => {
+            return document.querySelector(selector);
+        }
+        let inp = $(".inp");
+        inp.onchange = function (e) {
+            console.log(e.target.value);
+            let value = e.target.value;
+            // $(".content").innerText = e.target.value;
+            $(".content").insertAdjacentHTML("afterend", value);
+            // document.write(value);
+            // console.log(arguments);
+        }
+        let request = (src) => {
+            let script = document.createElement("script");
+            script.src = src;
+            script.onerror = () => {
+                console.log("加载失败");
+            }
+            // document.body.insertAdjacentElement("beforeend", script);
+        }
+        let request2 = (src) => {
+            let img = document.createElement("img");
+            img.onerror = () => {
+                console.log("img加载失败");
+            }
+            img.src = src;
+            // document.body.insertAdjacentElement("beforeend", img);
+        }
+        function cb1(data) {
+            console.log("cb1", data);
+        }
+        let url = "http://127.0.0.1:2233/jsonp?cb=cb1";
+        let a = 2;
+        let obj = {};
+        obj[a] = () => {
+            
+        }
+        request2(url);
+    </script>
+</body>
+</html>

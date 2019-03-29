@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function test1() {
+            let i = 0, total = 1000000000;
+            while (i++ < total) {
+
+            }
+            console.log("test1");
+        }
+        function test2() {
+            console.log("test2");
+        }
+        // let t = Promise.resolve(11);
+        let t1 = Promise.resolve(test1());
+        // console.log(t);
+        t1.then(test2());
+
+    </script>
+</body>
+</html>

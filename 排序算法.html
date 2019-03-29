@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    window.log = console.log;
+    const random = (length = 10, min = 0, max = 1000) => {
+        let arr = [];
+        while (length--) {
+            let random = parseInt(Math.random() * max + min);
+            arr.push(random);
+        }
+        return arr;
+    }
+    //定义一个数组交换元素位置的方法
+    Array.prototype.swap = function (i, j) {
+        [this[i], this[j]] = [this[j], this[i]];
+    }
+    {
+        let a = random(50000, 0, 1000000);
+        let start = new Date().getTime();
+        // log("选择排序", [].concat(arr));
+        for (let i = 0; i < a.length; i++) {
+            let temp = a[i];//临时变量存储当前最小值
+            let index = i;//存储当前最小值的下标值
+            for (let j = i + 1; j < a.length; j++) {
+                if (temp > a[j]) {
+                    temp = a[j]
+                    index = j;
+                }
+            }
+            //这一步是实现排序
+            a[index] = a[i];
+            a[i] = temp;
+        }
+        let end = new Date().getTime();
+        // log("选择排序结果", arr);
+        log("选择排序耗时", ((end - start) / 1000).toFixed(3));
+    }
+    {
+        log("冒泡排序");
+        let arr = random();
+        log("冒泡排序", [].concat(arr));
+        for (let i = 0; i < arr.length; i++) {
+            for (let j = i + 1; j < arr.length; j++) {
+                if (arr[i] > arr[j]) {
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+            }
+        }
+        log("冒泡排序", arr);
+    }    
+    {
+        log("插入排序");
+        let arr = random();
+        log("插入排序", [].concat(arr));
+        for (let i = 1; i < arr.length; i++) {
+            for (let j = i; j > 0; j--) {
+                if (arr[j] < arr[j - 1]) {
+                    [arr[j], arr[j - 1]] = [arr[j - 1], arr[j]];
+                } else {
+                    break;
+                }
+            }
+        }
+        log("插入排序", arr);
+    }
+    {
+        log("归并排序");
+        let a = random(50000, 0, 1000000);
+        let start = new Date().getTime();
+        // log("归并排序", [].concat(a));
+        // let a = [11, 8, 2, 10, 0, 2];
+        // let a = [11, 8, 2, 0];
+        // log("归并排序", [].concat(a));
+        let _merge = (arr, l, mid, r) => {
+            //判断一下如果左边的数组最大的值比右边的数组还小，就代表左右数组刚好是有序的
+            if (arr[mid - 1] <= arr[mid]) return;
+            let _arr = [];
+            for (let i = l; i <= r; i++) {
+                _arr.push(arr[i]);
+            }
+            // debugger;
+            let i = l;
+            let j = mid;
+            for (let k = l; k <= r; k++) {
+                if (i >= mid) {
+                    arr[k] = _arr[j - l];
+                    j++;
+                } else if (j > r) {
+                    arr[k] = _arr[i - l];
+                    i++;
+                } else if (_arr[i - l] < _arr[j - l]) {
+                    arr[k] = _arr[i - l];
+                    i++;
+                // } else if (_arr[i - l] > _arr[j - l]) {
+                } else {
+                    arr[k] = _arr[j - l];
+                    j++;
+                }
+            }
+        }
+        //是在[l, r]区间执行的
+        let _split = (arr, l, r) => {
+            if (l >= r) {
+                return;
+            }
+            let mid = parseInt((l + r) / 2);
+            _split(arr, l, mid);
+            _split(arr, mid + 1, r);
+            _merge(arr, l, mid + 1, r);
+        }
+        let merge = (arr, l, r) => {
+            // debugger
+            _split(arr, l, r);
+        }
+        merge(a, 0, a.length - 1);
+        // log("归并排序", a);
+        let end = new Date().getTime();
+        // log("选择排序结果", arr);
+        log("归并排序", ((end - start) / 1000).toFixed(3));
+    }
+    {
+        log("快速排序");
+        
+        // let a = random(50000, 0, 1000000);
+        // let start = new Date().getTime();
+        let a = [11, 2, 9, 4];
+        // let a = [11, 8, 2, 0];
+        // log("快速排序", [].concat(a));
+        //返回一个下标值，使得arr数组中 arr[l...p - 1] < arr[p]
+        //arr[p] > arr[p + 1...r] 
+        let _partition = (arr, l , r) => {
+            console.log("partition");
+            // let p = l;
+            let v = arr[l];
+            let j = l;
+            for (let i = l + 1; i <= r; i++) {
+                if (arr[i] < v) {
+                    arr.swap(j + 1, i);
+                    j++;
+                }
+            }
+            arr.swap(l, j);
+            return j;
+        }
+        //对[l, r]区间的数组进行快速排序
+        let _quickSort = (arr, l, r) => {
+            if (l >= r) return;
+            let p = _partition(arr, l, r);
+            _quickSort(arr, l, p - 1);
+            _quickSort(arr, p + 1, r);
+        }
+
+        let quickSort = (arr, l, r) => {
+            _quickSort(arr, l, r);
+        }
+        quickSort(a, 0, a.length - 1);
+        // let end = new Date().getTime();
+        // log("选择排序结果", arr);
+        // log("快速排序耗时", ((end - start) / 1000).toFixed(3));
+        log("快速排序结果", a);
+        // log("快速排序结果", a);
+    }
+    </script>
+</body>
+</html>

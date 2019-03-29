@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>test</div>
+    <script>
+        const getQuery = (name) => {
+            let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            let r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+        
+        setTimeout(() => {
+            //判断是哪个页面来源
+            let origin = getQuery("origin");
+            if (origin) return window.location.replace(origin);
+        }, 2000);  
+    </script>
+</body>
+</html>

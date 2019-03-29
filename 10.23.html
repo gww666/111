@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let _total = 0;
+        function test1(m) {
+            if (m > 3) {
+                return;
+            }
+            _total += m;
+            console.log(m);
+            test1(m + 1);
+            console.log(m);
+        }
+        function test2(m, total) {
+            if (m > 3) {
+                return total;
+            }
+            console.log(m);
+            return test2(m + 1, m + total);
+            console.log(m);
+        }
+        test1(1);    
+        let result2 = test2(1, 0);
+        console.log(_total, result2);
+            
+    </script>
+</body>
+</html>

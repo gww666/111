@@ -1,0 +1,183 @@
+http://test.define.report.scn.sunmath.cn/jobExecutorInfo/uploadfile
+http://test.define.report.scn.sunmath.cn/jobExecutorInfo/save
+
+$(function () {
+    var httpurl = "";
+    var enterprisecode = getUrlVar('enterpriseCode');
+
+
+    var validarteobj = {
+        rules: {
+            name: "required",
+            glueType: "required",
+            address:"required",
+        },
+        messages: {
+            name: "请输名称",
+            glueType: "请输版本号",
+            address:"请输上传文件",
+        }
+    }
+    var option = {
+        paging: false,
+        ordering: false,
+        add: {
+            id: "addRoleDlg",
+            height: "60vh",
+            width: "80vw",
+            templId: "addUserTempl",
+            url: httpurl + "/jobExecutorInfo/save", //新增的地址
+            btn: true, //对添加表格内的内容自定义,不需要框架提供的事件则可以选择把底部的”确定” “取消” 按钮隐藏 只要在add的配置代码里面写上 btn:false 即可
+            validated: validarteobj,
+            openCallback: function () { //点击事件，比如提交，关闭窗口等
+                var file;
+                $('#postFile').change(function() {
+                    file = $(this)[0].files[0];
+                });
+                var submitflage = true;
+                $('#sendFile').on('click', function() {
+
+                    if(!file){alert('请选择文件。');return;}
+                    var fd = new FormData();
+                    fd.append('uploadFile', file);
+                    if(submitflage){
+                        submitflage = false;
+                        $.ajax({
+                            url: httpurl + "/jobExecutorInfo/uploadfile",
+                            type: "post",
+                            beforeSend: function (xhr) {
+                                console.log(xhr.getAllResponseHeaders())
+                            },
+                            headers: {
+                                Accept: "application/json; charset=utf-8"
+                            },
+                            dataType: "text",
+                            data: fd,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (data) {
+                                debugger;
+                                layer.msg(data);
+                                layer.msg('上传成功')
+                                $('#address').val(data);
+                            },error: function (result) {
+                                debugger;
+                                layer.msg(result);
+                            }
+                        });
+                    }
+                })
+
+            },
+
+            onBeforeAdd:function(){
+                $('#enterprisecode').val(enterprisecode);
+            },
+            success: function () {
+                layer.closeAll();
+                layer.msg("添加成功")
+                table.reload();
+            }
+        },
+        checkCol: true,
+        search: true,
+        url: httpurl + "/jobExecutorInfo/findPageList?enterprisecode="+enterprisecode,
+        // 表格的头部，有多少列，就写多少
+        columns: [{
+            filed: "名称",
+            name: "name"
+        },{
+            filed: "版本号",
+            name: "glueType"
+        },{
+            filed: "文件名",
+            name: "address"
+        },{
+            filed: "环境",
+            name: "remark"
+        },{
+            filed: "系统",
+            name: "isproduce"
+        }],
+        // 列格式化
+        columnDefs: [{
+            render: function (data, type, row) { // 格式化 列
+                // 该列的原始数据是毫秒数
+                // 转成时间格式再渲染
+                // var ss = JSON.stringify(row);
+                if (data == "1")
+                    return "1（测试）";
+                if (data == "2")
+                    return "2（预发布）";
+                if (data == "3")
+                    return "3（生产）";
+                return " ";
+            },
+            targets: 5 // 第几列
+        }, ],
+        onInit: function () {
+        },
+        onSelectRow: function (row, index) {
+            console.log('onSelectRow');
+        },
+        onUnSelectRow: function (row, index) {
+            console.log('onUnSelectRow');
+        },
+
+
+    };
+
+
+    var table = suneeeUI.seTable("jobexecutor-master-page", option);
+
+    function deleteOneFun(row, ids) {
+        layer.confirm("确定删除该条记录吗?", {
+            btn: ['确定', '取消'] //按钮
+        }, function () { // 点击确定的时候
+            debugger
+            var data = "ids=" + row.id;
+            var url = httpurl + "/jobExecutorInfo/batchDelete";
+            if (ids) {
+                data = "ids=" + ids.toString();
+                url = httpurl + "/jobExecutorInfo/batchDelete";
+            }
+            $.ajax({
+                type: "DELETE",
+                dataType: "json",
+                data: data,
+                url: url,
+                success: function (result) {
+                    if (result.returnCode == 1) {
+                        layer.msg("删除成功");
+                        table.reload(); //表格刷新
+                    } else {
+                        layer.msg("删除失败");
+                    }
+                },
+                error: function (result) {
+                    layer.msg("删除失败");
+                },
+            });
+        });
+    }
+
+    //    获取当前访问的URL和参数
+    function getUrlVars() {
+        var vars = [], hash;
+        var urlTemple = window.$.addtabs.currentUrl();
+        var hashes = urlTemple.slice(urlTemple.indexOf('?') + 1).split('&');
+        for (var i = 0; i < hashes.length; i++) {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+
+    //得到指定参数的value
+    function getUrlVar(name) {
+        return getUrlVars()[name];
+    }
+
+});

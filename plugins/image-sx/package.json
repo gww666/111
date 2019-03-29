@@ -1,0 +1,64 @@
+{
+  "name": "image-sx",
+  "version": "0.1.6",
+  "private": false,
+  "license": "MIT",
+  "author": "sggw100@126.com",
+  "main": "dist/image-sx.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gww666/image-sx.git"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "webpack --config build/webpack.prod.conf.js",
+    "dev": "webpack-dev-server --config build/webpack.dev.conf.js",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.3.1",
+    "vue": "^2.6.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.3.1",
+    "babel-loader": "^8.0.5",
+    "css-loader": "^2.1.0",
+    "html-webpack-plugin": "^3.2.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "vue-loader": "^15.6.3",
+    "vue-template-compiler": "^2.6.6",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.1.14"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {
+      "no-console": 0
+    },
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+</head>
+
+<body>
+    <div class="content"></div>
+    <script>
+        // marked.setOptions({
+        //     renderer: new marked.Renderer(),
+        //     gfm: true,
+        //     tables: true,
+        //     breaks: false,
+        //     pedantic: false,
+        //     sanitize: false,
+        //     smartLists: true,
+        //     smartypants: false,
+        //     // highlight: function (code,lang) {
+        //     //     //使用 highlight 插件解析文档中代码部分
+        //     //     return hljs.highlightAuto(code,[lang]).value;
+        //     // }
+        // });
+        
+        (async () => {
+            let url = "http://127.0.0.1:2233/getMdStr";
+            let res = await fetch(url);
+            let res2 = await res.text();
+            console.log(res2);
+            // const reader = new FileReader();
+            // reader.readAsText(res.blob)
+            // console.log("res", res);
+            // console.log("res", res.body);
+            // console.log("res-length", res.body.length);
+            // marked.setOptions({
+            //     highlight(code, lang) {
+            //         console.log(code);
+            //         return hljs.highlightAuto(code, [lang]).value;
+            //     }
+            // });
+            let result = marked(res2);
+            document.querySelector(".content").innerHTML = result;
+            // hljs.configure({useBR: true});
+            Array.prototype.forEach.call(document.querySelectorAll("pre code"), item => {
+                hljs.highlightBlock(item);
+                console.log(hljs.getLanguage("javascript"));
+                
+            });
+        })();
+    </script>
+</body>
+
+</html>

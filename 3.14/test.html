@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 200px;
+            height: 200px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+
+    </div>
+    <script>
+    function initDragEvent(el) {
+            // console.log("开始拖拽");
+
+            //给dom元素添加dragable=true，该dom元素通常是样式组件的外部盒子
+            el.draggable = true;
+            el.ondragstart = (e) => {
+                console.log("开始拖拽", e);
+            }
+            // el.ondragend = (e) => {
+            //     e.preventDefault();
+            //     console.log("end");
+            // }
+        }
+
+        function initDropEvent(el) {
+            console.log("置为可拖拽的区域", el);
+
+            // allowDrop
+            el.ondargenter = (e) => {
+                e.preventDefault();
+                console.log("enter");
+
+            }
+            el.ondragover = (e) => {
+                //阻止默认浏览器行为
+                e.preventDefault();
+                console.log("over");
+            }
+            //dropevent
+            el.ondrop = (e) => {
+                e.preventDefault();
+                //获取信息
+                // let t = JSON.parse(e.dataTransfer.getData("dragData"));
+                console.log("拖拽结束");
+            }
+            // el.addEventListener("dragover", e => {
+            //     e.preventDefault();
+            //     // console.log("拖拽结束");
+            // }, false);
+            // el.addEventListener("dargenter", e => {
+            //     e.preventDefault();
+            //     console.log("拖拽结束");
+            // }, false);
+            // el.addEventListener("drop", e => {
+            //     e.preventDefault();
+            //     console.log("拖拽结束");
+            // }, false);
+        }
+        let box = document.querySelector(".box");
+        // let iframe = document.querySelector(".iframe");
+        // initDragEvent(box);
+        // initDropEvent(box);
+        window.addEventListener("message", () => {
+            console.log("接到信息");
+            initDropEvent(box);
+        }, false);
+    </script>
+</body>
+</html>

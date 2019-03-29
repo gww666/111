@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div class="box">
+
+    </div>
+    <script>
+    //call传入的undefined或null时，代表window调用
+    {        
+        function test() {
+            console.log("this", this);
+            this.count++;
+        }
+        test.count = 0;    
+        test.call(undefined);
+        console.log("test", test.count);
+    }
+    {
+        // function test() {
+        //     console.log(this);
+        //     console.log(this.a);
+        // }
+        let a = "jianchen";
+        // (function () {
+        //     "use strict";
+        //     test();
+        // })();
+        // test();
+    }
+    // let a = "jianchen";
+    // let box = document.querySelector("box");
+    {
+        function test(a) {
+            this.a = a;
+            return {
+                b: 1
+            }
+        }
+        let obj = new test(3);
+        console.log(obj);
+         
+    }
+    {
+        console.log("硬绑定");
+        function test(a) {
+            // console.log(this.a);
+            this.a = a;
+        }
+        let obj = {};
+        let bind = function (fn, ctx) {
+            return function () {
+                return fn.apply(ctx, arguments);
+            }
+        }
+        let t2 = bind(test, obj);
+        // let t2 = test.bind(obj);
+
+        let t3 = new t2(7);
+        console.log(obj.a);
+        console.log(t3.a);
+        
+        
+    }
+    {
+        console.log("测试new");
+        let fn = function () {};
+        function test(a) {
+            console.log("this", this);
+            console.log(this instanceof fn);
+            this.a = a;
+        }
+        // fn.prototype = this.prototype;
+        let t1 = new test(2);
+        
+    }
+    {
+        console.log("测试代理");
+        
+        let obj = {t: 2};
+        let handler =  {
+            get(target, key) {
+                console.log(target, key);
+                return target[key] || "38";
+                
+            },
+            set(target, key, value) {
+                // console.log("target === obj", target === p);
+                if (key === "age") {
+                    if (Number.isInteger(value)) {
+                        target[key] = value;
+                    } else {
+                        throw new TypeError("age必须是整数");
+                    }
+                    
+                }
+                
+            }
+        }
+        let p = new Proxy(obj, handler);
+        p.b = 3;
+        console.log(obj);
+        console.log(p.t);
+        console.log(p.a);
+        // p.age = "sdsd";
+        p.age = 4;
+    }
+    {
+        console.log("测试方法引用");
+        let add = (num) => {
+            num += 1;
+            console.log(num);
+        }
+        let temp = add;
+        add = (num) => {
+            num -= 10;
+            temp(num);
+        }
+        add(10);
+    }
+    
+    
+    </script>
+</body>
+</html>

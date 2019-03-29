@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function _new() {
+            let fn = Array.prototype.shift.call(arguments);
+            let obj = {};
+            obj.__proto__ = fn.prototype;
+            fn.apply(obj, arguments);
+            if (Object.prototype.toString.call(fn(arguments)) === "[object Object]") {
+                obj = fn(arguments);
+            }
+            return obj;
+        }
+
+        function A(a) {
+            this.a = a;
+            // console.log("this", this);
+            return {b: 2};
+        }
+        let _a = _new(A, 111);
+        // let _a = new A();
+        console.log(_a);
+    </script>
+</body>
+</html>

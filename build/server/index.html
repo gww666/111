@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>111111啦啦啦</div>
+    <input type="file" class="zip" id="zip"/>
+    <label>
+        <span>企业编码：</span>
+        <input type="text" class="enterpriseCode" value="nj"/>
+    </label> 
+    <label>
+        <span>平台类型：</span>
+        <input type="text" class="OS" />
+    </label> 
+    <label>
+        <span>环境：</span>
+        <input type="text" class="env" />
+    </label>
+    <label>
+        <span>版本号：</span>
+        <input type="text" class="version" />
+    </label>
+    <label>
+        <span>发版描述：</span>
+        <input type="text" class="msg" />
+    </label>
+    <button class="upload">上传</button>
+    <div class="result">暂无结果</div>
+    <script>
+        let xhrInstance = null;
+        let file = null;
+        const $ = selector => {
+            return document.querySelector(selector);
+        }
+        const ajax = (options) => {
+            let xhr;
+            if (xhrInstance) {
+                xhr = xhrInstance;
+            } else {
+                xhrInstance = xhr = new XMLHttpRequest();
+            }
+            return new Promise(resolve => {
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200 || xhr.status === 304) {
+                            resolve(xhr.responseText);
+                        }
+                    }
+                }
+                xhr.open(options.method, options.url, true);
+                //如果设置了头部，进行循环设置
+                if (options.headers) {
+                    for (let key in options.headers) {
+                        xhr.setRequestHeader(key, options.headers[key]);
+                    }
+                }
+                xhr.send(options.data);
+            });
+        }
+        $(".zip").onchange = (event) => {
+            file = event.target.files[0];
+        }
+        $(".upload").onclick = async () => {
+            //上传按钮的事件
+            // console.log("点击了我");
+            let formData = new FormData();
+            formData.append("uploadFile", file);
+            let options = {
+                method: "post",
+                url: "http://test.define.report.scn.sunmath.cn/jobExecutorInfo/uploadfile",
+                data: formData
+            }
+            let zipServerPath = await ajax(options);
+            // console.log(zipServerPath);
+            
+            // return;
+            let params = {
+                address: zipServerPath,//压缩包地址
+                enterprisecode: $(".enterpriseCode").value,//企业编码
+                isproduce: $(".OS").value,//系统平台
+                name: $(".msg").value,//发版描述
+                glueType: $(".version").value,//版本号
+                remark: $(".env").value,//环境
+            }
+            //构建save接口的参数
+            let options2 = {
+                method: "post",
+                url: "http://test.define.report.scn.sunmath.cn/jobExecutorInfo/save",
+                data: JSON.stringify(params),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+            let result = JSON.parse(await ajax(options2));
+            // console.log(result);
+            //上传成功
+            if (result.returnCode === 1) {
+                $(".result").innerHTML = "success";
+            }
+        }
+    </script>
+</body>
+</html>

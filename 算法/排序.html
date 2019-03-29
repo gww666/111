@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const random = (length = 10, min = 0, max = 1000) => {
+            let arr = [];
+            while (length--) {
+                let random = parseInt(Math.random() * max + min);
+                arr.push(random);
+            } 
+            return arr;
+        }
+        const rootArr = random(20);
+    {
+        //归并排序
+        let _arr = [].concat(rootArr);
+        // let _arr = [5, 2, 10, 1, 9];
+        console.log(_arr);
+        
+        //使得[l, mid]和[mid, r]两个区间的数据进行归并
+        let merge = (arr, l, mid, r) => {
+            let temp = [];
+            for (let i = l; i <= r; i++) {
+                temp.push(arr[i]);
+            }
+            let k = l;
+            let j = mid + 1;
+            for (let i = l; i <= r; i++) {
+                if (k > mid) {
+                    arr[i] = temp[j - l];
+                    j++
+                } else if (j > r) {
+                    arr[i] = temp[k - l];
+                    k++;
+                } else if (temp[k - l] > temp[j - l]) {
+                    arr[i] = temp[j - l];
+                    j++;
+                } else {
+                    arr[i] = temp[k - l];
+                    k++;
+                }
+            }
+        }
+        let _split = (arr, l, r) => {
+            // console.log(l, r);
+            if (l >= r) {
+                return;
+            }
+            let mid = parseInt((l + r) / 2);
+            // merge(l, mid);
+            // merge(mid, r);
+            _split(arr, l, mid);
+            _split(arr, mid + 1, r);
+            merge(arr, l, mid, r);
+        }
+        let sort = (arr, l, r) => {
+            _split(_arr, l, r);
+        }
+        sort(_arr, 0, _arr.length - 1);
+        console.log("结果", _arr);
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    {        
+        // let p = new Promise(resolve => {
+        //     setTimeout(() => {
+        //         resolve(52);
+        //     }, 1000);
+        // }).then(data => {
+        //     console.log("data", data);
+        // });
+    }
+    {
+        let uid = 0;
+        const PENDING = "pending";
+        const FULFILLED = "fulfilled";
+        class MPromise {
+            constructor(executor) {
+                this.id = ++uid;
+                this.callbacks = [];
+                this.state = PENDING;
+                this.value = null;
+                executor(this.resolve.bind(this));
+            }
+            resolve(value) {
+                if (value && (typeof value === "object" || typeof value === "function")) {
+                    //这里拿到自己的then方法里返回的实例对象的then方法
+                    let then = value.then;
+                    if (typeof then === "function") {
+                        //这里的resolve是
+                        then.call(value, this.resolve.bind(this));
+                        return;
+                    }
+                }
+                this.value = value;
+                this.state = FULFILLED;
+                setTimeout(() => {
+                    this.callbacks.forEach(cb => {
+                        // cb(value);
+                        this.handler(cb);
+                    });
+                }, 0);
+            }
+            then(onFulfilled) {
+                console.log("this", this);
+                
+                // debugger
+                //注意这一步
+                return new MPromise(resolve => {
+                    // console.log("then里面的this", this);
+                    //这里的handler是当前p实例对象的handler方法
+                    //在当前新new的实例对象的constructor函数里调用
+                    this.handler({
+                        onFulfilled: onFulfilled || null,
+                        //这里的resolve是这里新new的实例对象的resolve方法
+                        resolve
+                    });
+                });
+            }
+            handler(cb) {
+                if (this.state === PENDING) {
+                    this.callbacks.push(cb);
+                    return;
+                }
+                if (!cb.onFulfilled) {
+                    cb.resolve(this.value);
+                }
+                //拿到一个Promise实例对象
+                let ret = cb.onFulfilled(this.value);
+                // console.log("ret", ret);
+                
+                cb.resolve(ret);
+            }
+        }
+        // debugger
+        let fn = () => {
+            return new MPromise(resolve => {
+                setTimeout(() => {
+                    console.log("1");
+                    resolve(123);
+                }, 1000);
+            });
+        }
+        fn().then(function(data) {
+            return new MPromise(resolve => {
+                setTimeout(() => {
+                    console.log("2");
+                    
+                    resolve(456);
+                }, 1000);
+            });
+        }).then(function(data) {
+            // console.log("3", this);
+            
+            console.log(data);
+        });
+
+        // p.then(data => {
+        //     console.log("then方法1", data);
+        // }).then(data => {
+        //     console.log("then方法2", data);
+        // });
+    }
+
+        
+
+    </script>
+</body>
+</html>

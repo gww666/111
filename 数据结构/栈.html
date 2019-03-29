@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //栈特点：后进先出(LIFO)
+        class Stack {
+            constructor() {
+                this.stack = [];
+            }
+            push(el) {
+                this.stack.push(el);
+            }
+            pop() {
+                return this.stack.pop();
+            }
+            isEmpty() {
+                return this.stack.length === 0;
+            }
+        }
+        //基于栈实现队列
+        class Queue {
+            constructor() {
+                this.pushStack = new Stack();
+                this.popStack = new Stack();
+            }
+            enqueue() {
+                let _els = Array.prototype.slice.call(arguments, 0);
+                this.pushStack.push(..._els);
+            }
+            dequeue() {
+                if (this.popStack.isEmpty) {
+                    let el;
+                    while (el = this.pushStack.pop()) {
+                        this.popStack.push(el);
+                    }
+                }
+                return this.popStack.pop();
+            }
+
+        }
+        // let stack1 = new Stack();
+        // stack1.push(1);
+        // stack2.push(2)
+        let queue = new Queue();
+        queue.enqueue(1);
+        queue.enqueue(2);
+        console.log(queue.dequeue());
+    </script>
+</body>
+</html>

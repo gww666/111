@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div class="test"></div>
+    <script>
+    {
+        console.log("测试方法返回");
+        function test() {
+            
+        }
+        let obj = (true && test());
+        console.log(obj);
+        
+    }
+    {
+        console.log("测试代理");
+        let p = new Proxy({a: 1}, {
+            has(target, key) {
+                const has = key in target;
+                if (!has) {
+                    console.error("没有这个属性：" + key);
+                }
+                return has;
+            }
+        });
+        
+    }    
+    {
+        console.log("测试nodeType");
+        let dom = document.querySelector(".test");
+        console.log(dom.nodeType);
+        console.log(dom.tagName);
+        // dom.ELEMENT_NODE
+    }
+    {
+        console.log("测试api");
+        let arr = [1, {a: 2}, 3];
+        //返回一个新数组，是原数组的浅拷贝
+        let arr2 = arr.slice();//[0, end]
+        arr2[1].a = "rrr";
+        console.log("arr", arr);
+        console.log("arr2", arr2);
+        
+    }
+    {
+        console.log("测试Set");
+        let set = new Set("ddfdf");
+        console.log(set.entries());
+        set.forEach((...args) => {
+            console.log(args);
+        });
+        let set2 = new Set([1, 2, 3, 2]);
+        console.log(set2);
+        let set3 = new Set([{a: 1}, {a: 1}]);
+        console.log(set3);
+        
+        
+        //可以用展开运算符把set数据类型转为数组
+        let arr = [...set2];
+        console.log(arr);
+        console.log("测试map");
+        let map = new Map([["1", 2]]);
+        console.log("map", map);
+        
+    }
+    {
+        console.log("测试await");
+        const s = () => {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve(false);
+                }, 1000);
+            });
+        }
+        const test = async () => {
+            if (!await s()) {
+                console.log("暂停");
+            }
+        }
+        test();
+    }
+    </script>
+</body>
+</html>

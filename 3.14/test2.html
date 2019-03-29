@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let obj1 = {
+            tag: "obj1"
+        };
+        let obj2 = {
+            tag: "obj2",
+            get a() {
+                return this._a;
+            },
+            set a(val) {
+                console.log(this.tag);
+                this._a = val;
+            }
+        }
+        function delegate(proto, target, name) {
+            Object.defineProperty(proto, name, {
+                get() {
+                    return this[target][name];
+                },
+                set(val) {
+                    return this[target][name] = val;
+                }
+            });
+        }
+        delegate(obj1, "obj2", "a");
+        obj1.obj2 = Object.create(obj2);
+        obj1.a = 2;
+    </script>
+</body>
+</html>

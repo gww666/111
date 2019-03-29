@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    html, body {
+        width: 100%;
+        height: 100%;
+        /* overflow: hidden; */
+    }
+    /* .img, .img2 {
+        width: 300px;
+        height: 400px;
+    } */
+    .box {
+        position: relative;
+        /* margin-left: 30px;
+        margin-top: 50px; */
+    }
+
+    .drag {
+        box-sizing: border-box;
+        width: 150px;
+        height: 100px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        /* left: 30px;
+        top: 10px; */
+        /* background: red; */
+        border: 1px dashed red;
+        display: none;
+    }
+    .clip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: none;
+    }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <canvas class="canvas" width="300" height="400"></canvas>
+        <canvas class="clip" width="300" height="400"></canvas>
+        
+        <div class="drag"></div>
+        
+    </div>
+    <button type="button" class="clipBtn">裁剪</button>
+    <button type="button" class="confirm">确定</button>
+    <canvas class="result" width="200" height="200"></canvas>
+    <!-- <img src="./timg.jpeg" alt="" class="img" style="display: none;" width="300" height="400"> -->
+    <!-- <img src="./timg.jpeg" alt="" class="img2" style="display: none;" width="300" height="400"> -->
+    <script>
+        const $ = (s) => {
+            return document.querySelector(s);
+        }
+        const getStyle = (el, styleName) => {
+            let result = window.getComputedStyle(el, null)[styleName];
+            let px = ["width", "height", "left", "right", "top", "bottom"];
+            if (px.indexOf(styleName) > -1) {
+                return Number(result.slice(0, -2));
+            }
+        }
+        let img = new Image();
+        // let canvas = document.getElementsByClassName("canvas")[0];
+        let canvas = $(".canvas");
+        let clipCanvas = $(".clip");
+        let resultCanvas = $(".result");
+        let drag = $(".drag");
+        let box = $(".box");
+        let confirm = $(".confirm");
+        let clipBtn = $(".clipBtn");
+        // console.log(canvas);
+        
+        let ctx = canvas.getContext("2d");
+        let clipCtx = clipCanvas.getContext("2d");
+        let resultCtx = resultCanvas.getContext("2d");
+        
+        let offsetX = 0;
+        let offsetY = 0;
+        let boxLeft = box.getBoundingClientRect().left;
+        let boxTop = box.getBoundingClientRect().top;
+        let originWidth;
+        let originHeight;
+        let startX;
+        let startY;
+        const area = {
+            top: 20 || getStyle(drag, "height") * 0.2,
+            bottom: 20 || getStyle(drag, "height") * 0.2,
+            left: 20 || getStyle(drag, "width") * 0.2,
+            right: 20 || getStyle(drag, "width") * 0.2
+        }
+        let xt = "";
+        let yt = "";
+        
+        // console.log("left", boxLeft);
+        const changeFn = {
+            left(el, distance) {
+                let oWidth = getStyle(el, "width");
+                let oLeft = getStyle(el, "left");
+                // distance为负代表向左拖动，width要变大
+                let dWidth = oWidth - distance > 300 ? 300 : oWidth - distance;
+                // distance为正代表向右拖动，left要变大
+                // distance为负代表向左拖动，left要变小
+                let dLeft = oLeft + distance;
+                if (dLeft <= 0) return;
+                el.style.width = dWidth + "px";
+                el.style.left = dLeft + "px"; 
+            },
+            right(el, distance) {
+                let oLeft = getStyle(el, "left");
+                let oWidth = getStyle(el, "width");
+                //规定右边界
+                // console.log(oLeft + oWidth);
+                
+                if (oLeft + oWidth >= 300 && distance > 0) {
+                    return el.style.width = 300 - oLeft + "px";
+                }
+                // if (oLeft + oWidth >= 300 && distance > 0) return;
+                let dWidth = oWidth + distance > 300 ? 300 : oWidth + distance;
+                el.style.width = dWidth + "px";
+            },
+            top(el, distance) {
+                let oHeight = getStyle(el, "height");
+                let dHeight = oHeight - distance > 400 ? 400 : oHeight - distance;
+                //distance > 0，代表向下拖动，top变大
+                let oTop = getStyle(el, "top");
+                // let dTop = distance >= 0 ? oTop + distance + "px" : oTop + distance + "px";
+                let dTop = oTop + distance;
+                //规定上边界
+                if (oTop <= 0 && distance < 0) {
+                    // el.style.height = dHeight + "px";
+                    el.style.top = 0;
+                    return;
+                }
+                el.style.height = dHeight + "px";
+                el.style.top = dTop + "px";
+            },
+            bottom(el, distance) {
+                let oTop = getStyle(el, "top");
+                let oHeight = getStyle(el, "height");
+
+                if (oTop + oHeight >= 400 && distance > 0) {
+                    return el.style.top = 400 - oHeight + "px";
+                } 
+                let dHeight = oHeight + distance > 400 ? 400 : oHeight + distance;
+                el.style.height = dHeight + "px";
+            }
+
+        }
+        // const change = (el, direction) => {
+            
+        // }
+        drag.ontouchstart = ({touches}) => {
+            
+            startX = touches[0].clientX;
+            startY = touches[0].clientY;
+            // console.log(e);
+            let top = drag.getBoundingClientRect().top;
+            let left = drag.getBoundingClientRect().left;
+            //手指相对于drag原点的偏移量
+            offsetX = startX - left;
+            offsetY = startY - top;
+            // console.log(offsetX);
+            
+            //判定手指处于拖拽框的哪个区域
+            
+            if (offsetX < area.left) {
+                xt = "left";
+            } else if (offsetX > getStyle(drag, "width") - area.right) { 
+                xt = "right";
+            }
+            if (offsetY < area.top) {
+                yt = "top";
+            } else if (offsetY > getStyle(drag, "height") - area.bottom) {
+                yt = "bottom"
+            }
+            // console.log(xt + yt);
+            
+            // console.log(offsetX);
+            // console.log(offsetY);
+            
+            // console.log("startX", startX);
+            
+        }
+        drag.ontouchmove = ({target, touches}) => {
+        
+        // drag.ontouchmove = (e) => {
+
+            let eventX = touches[0].clientX;
+            let eventY = touches[0].clientY;
+
+            // if (eventX - boxLeft > 300 || eventY - boxTop > 400) return;
+            
+            // 拖拽框当前的原点坐标
+            
+            let distanceX = eventX - startX;
+            let distanceY = eventY - startY;
+            startX = touches[0].clientX;
+            startY = touches[0].clientY;
+            // console.log(distanceX);
+            if (xt) changeFn[xt](drag, distanceX);
+            if (yt) changeFn[yt](drag, distanceY);
+
+            if (!xt && !yt) {
+                //当手指移出整个图片的时候，不再触发事件
+                // if (eventX - boxLeft > 300 || eventY - boxTop > 400) return;
+                // let oTop = getStyle(drag, "top");
+                // let oLeft = getStyle(drag, "left");
+                // let oHeight = getStyle(drag, "height");
+                // let oWidth = getStyle(drag, "width");
+
+                let currentX = eventX - boxLeft - offsetX;
+                target.style.left = currentX + "px";
+                let currentY = eventY - boxTop - offsetY;
+                target.style.top = currentY + "px";
+            }
+            
+            // console.log(e);
+            // e.stopPropagation();
+            // e.preventDefault();
+            //canvas绘制透明区域
+            //拖拽框的原点坐标
+            let _x = drag.getBoundingClientRect().left - boxLeft;
+            let _y = drag.getBoundingClientRect().top - boxTop;
+
+            // log
+            // clipCtx.clearRect(0, 0, 150, 100);
+            // let ox = _x / 300 * originWidth;
+            // let oy = _y / 400 * originHeight;
+            // let ow = 150 / 300 * originWidth;
+            // let oh = 100 / 400 * originHeight;
+            // clipCtx.drawImage(img, ox, oy, ow, oh, 0, 0, 150, 100);
+            clipCtx.clearRect(0, 0, 300, 400);
+            clipCtx.fillStyle = "rgba(0, 0, 0, 0.4)";
+            clipCtx.fillRect(0, 0, 300, 400);
+            //清除区域的宽高
+            let clearWidth = getStyle(drag, "width");
+            let clearHeight = getStyle(drag, "height");
+            clipCtx.clearRect(_x, _y, clearWidth, clearHeight);
+        }
+        drag.ontouchend = ({target}) => {
+            
+            let oTop = getStyle(drag, "top");
+            let oLeft = getStyle(drag, "left");
+            let oHeight = getStyle(drag, "height");
+            let oWidth = getStyle(drag, "width");
+            let needResetClearArea = false;
+            if (oLeft < 0) {
+                needResetClearArea = true;
+                target.style.left = 0;
+            } else if (oLeft + oWidth > 300) {
+                needResetClearArea = true;
+                target.style.left = 300 - oWidth + "px";
+            }
+            if (oTop < 0) {
+                needResetClearArea = true;
+                target.style.top = 0;
+            } else if (oTop + oHeight > 400) {
+                needResetClearArea = true;
+                target.style.top = 400 - oHeight + "px";
+            }
+            if (needResetClearArea && !xt && !yt) {
+                //清除区域的宽高
+                let clearWidth = getStyle(drag, "width");
+                let clearHeight = getStyle(drag, "height");
+                let _x = drag.getBoundingClientRect().left - boxLeft;
+                let _y = drag.getBoundingClientRect().top - boxTop;
+                clipCtx.clearRect(_x, _y, clearWidth, clearHeight);
+            }
+            //清理操作
+            xt = "";
+            yt = "";
+        }
+
+        img.onload = () => {
+            //初始化操作
+            originWidth = img.width;
+            originHeight = img.height;
+            ctx.drawImage(img, 0, 0, 300, 400);
+            clipCtx.fillStyle = "rgba(0, 0, 0, 0.4)";
+            clipCtx.fillRect(0, 0, 300, 400);
+            clipCtx.clearRect(0, 0, 150, 100);
+        }
+        img.src = "./timg.jpeg";
+        confirm.onclick = () => {
+            let _x = drag.getBoundingClientRect().left - boxLeft;
+            let _y = drag.getBoundingClientRect().top - boxTop;
+            let clipBoxWidth = getStyle(drag, "width");
+            let clipBoxHeight = getStyle(drag, "height");
+            let ox = _x / 300 * originWidth;
+            let oy = _y / 400 * originHeight;
+            let ow = clipBoxWidth / 300 * originWidth;
+            let oh = clipBoxHeight / 400 * originHeight;
+            resultCtx.drawImage(img, ox, oy, ow, oh, 0, 0, 200, 200);
+            // resultCanvas.drawImage(img, )
+        }
+        clipBtn.onclick = () => {
+            clipCanvas.style.display = "block";
+            drag.style.display = "block";
+        }
+                
+    </script>
+</body>
+</html>
