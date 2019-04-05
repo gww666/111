@@ -41,47 +41,87 @@
             width: 100%;
             height: 100%;
         }
+        .btn-box {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        button {
+            background: #ddd;
+            width: 60px;
+            height: 25px;
+            border: 1px solid #fafafa;
+        }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.16/peer.min.js"></script>
+    <script src="./vconsole.min.js"></script>
+    <script src="./recorder.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+    <script>
+        new VConsole();
+    </script>
 </head>
 
 <body>
     <div class="remote-box">
         <video id="remote" autoplay></video>
         <div class="local-box">
-            <video id="local" autoplay></video>
+            <video id="local" autoplay muted></video>
         </div>
     </div>
+    <div class="btn-box">
+        <button class="record">录制</button>
+        <button class="stop">结束</button>
+    </div>
     <script>
-        const peer = new Peer('sender', { host: '120.78.221.14', port: 9000, path: '/myapp' })
+        window.onerror = (...args) => {
+            console.log(args);
+        }
+        //获取URL参数
+        const getQueryString = (name) => {
+	        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+	        let r = window.location.search.substr(1).match(reg);
+	        if (r != null) return unescape(r[2]); return null;
+        }
+        //获取peerid
+        let call_id = getQueryString("call_id") || "sender";
+        let answer_id = getQueryString("answer_id") || "receiver";
+        const peer = new Peer(call_id, {
+            debug: 3, 
+            host: '120.78.221.14', 
+            port: 9000, 
+            path: '/myapp',
+            config: {
+                "iceServers": [
+                    {urls: "stun:stun1.l.google.com:19302"},
+                    {urls: "turn:120.78.221.14:3478", "username": "gw666", "credential": "123456"}
+                ]
+            },
+        });
         const startChat = async () => {
             let localStream;
-            try {
+            // try {
                 localStream = await navigator.mediaDevices.getUserMedia({
                     video: true,
                     audio: true
                 });
                 document.querySelector('video#local').srcObject = localStream
-                const call = peer.call('receiver', localStream)
+                const call = peer.call(answer_id, localStream)
                 call.on('stream', remoteStream => {
+                    //对传过来的视频进行保存
+                    new Recorder({
+                        startBtn: ".record",
+                        stopBtn: ".stop",
+                        stream: remoteStream
+                    });
                     document.querySelector('video#remote').srcObject = remoteStream
                 });
-            } catch (err) {
-                // console.log("err", JSON.stringify(err));
-                alert(JSON.stringify(err));
-                
-            }
-            // const localStream = await navigator.mediaDevices.getUserMedia({
-            //     video: true,
-            //     audio: true
-            // });
-            // document.querySelector('video#local').srcObject = localStream
-            // const call = peer.call('receiver', localStream)
-            // call.on('stream', remoteStream => {
-            //     document.querySelector('video#remote').srcObject = remoteStream
-            // });
+            // } catch (err) {
+            //     console.log("err", err);
+            // }
         }
-        startChat()
+        startChat();
     </script>
 </body>
 

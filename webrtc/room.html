@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/socket.io/2.2.0/socket.io.slim.js"></script>
+    <script src="./vconsole.min.js"></script>
+    <script>
+        new VConsole();
+    </script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            display: flex;
+
+        }
+        .box {
+            display: flex;
+            flex-flow: column nowrap;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .id-text {
+            margin-bottom: 20px;
+        }
+        .list {
+            width: 80%;
+            height: 400px;
+            border: 1px solid #f1f1f1;
+            overflow-y: auto;
+        }
+        .item {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            height: 35px;
+            align-items: center;
+            box-sizing: border-box;
+            padding: 0 10px;
+        }
+        button {
+            background: #f1f1f1;
+            width: 40px;
+            height: 25px;
+            outline: none;
+        }
+        .cover {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            top: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <p class="id-text">your id: <span class="id"></span></p>
+        <div class="list"></div>
+    </div>
+    <div class="cover" style="display: none;">
+        <p>您正在呼叫<span class="call-id"></span></p>
+    </div>
+    <script>
+        // const socket = io("http://120.78.221.14:2266");
+        const socket = io("http://10.20.201.195:2266");
+        const $ = (selector) => {
+            return document.querySelector(selector);
+        }
+        // const getId = (count) => {
+        //     let id = localStorage.getItem() || random(count);
+        // }
+        //生成5位随机数
+        const random = (count = 5) => {
+            // 随机生成一个id
+            const _number = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            let i = count;
+            let arr = [];
+            while (i--) {
+                let r = parseInt(Math.random() * 10);
+                arr.push(_number[r]);
+            }
+            return arr.join("");
+        }
+        let id = random();
+        $(".id").innerHTML = id;
+        socket.emit("create id", id);
+        const dom = (ids, callingids = []) => {
+            console.log("重新生成dom--ids", ids);
+            console.log("重新生成dom--callingids", callingids);
+            
+            let arr = [];
+            return `
+                    <div class="item">
+                        <span>在线用户</span>
+                        <span>操作按钮</span>
+                    </div>
+                ` + ids.map(item => {
+                return `
+                    <div class="item">
+                        <span>${item}</span>
+                        <button data-id="${item}" ${callingids.includes(item) ? "disabled" : ""}>
+                            ${callingids.includes(item) ? "通话中" : "通话"}
+                        </button>
+                    </div>
+                `
+            }).join("");
+        }
+        // socket.on("connect", () => {
+        //     console.log("connect");
+        socket.on("update id list", ids => {
+            console.log("ids", ids);
+            
+            // return console.log("客户端更新id列表", ids);
+            ids = Object.values(ids).filter(_id => _id !== id);
+            // console.log("客户端更新id列表", ids);
+            $(".list").innerHTML = dom(ids);
+        });
+
+        //监听call事件
+        socket.on("call", obj => {
+            //判断是否是呼叫自己
+            if (obj.answer === id) {
+                let val = confirm(`${obj.call}邀请您进行视频通话`);
+                if (val) {
+                    //接收邀请
+                    socket.emit("accept", obj);
+                    //跳转到receiver页面
+                    location.href = `https://120.78.221.14/receiver.html?call_id=${obj.call}&answer_id=${obj.answer}`;
+                    // location.href = "https://120.78.221.14/receiver.html?mid=" + obj.answer;
+                    
+                } else {
+                    //拒绝邀请
+                    socket.emit("refuse", obj);
+                }
+            }
+        });
+
+        //监听accept事件
+        socket.on("accept", obj => {
+            if (obj.call === id) {
+                //关闭遮罩
+                $(".cover").style.display = "none";
+                //跳往send页面
+                location.href = `https://120.78.221.14/send.html?call_id=${obj.call}&answer_id=${obj.answer}`;
+            }
+        });
+
+        //监听refuse事件
+        socket.on("refuse", obj => {
+            if (obj.call === id) {
+                //关闭遮罩
+                $(".cover").style.display = "none";
+                // //跳往send页面
+                // location.href = "receiver.html?id=" + obj.call;
+                alert(`${obj.answer}拒绝了您的通话邀请`);
+            }
+        });
+
+        //监听占用或释放id的事件
+        socket.on("update callingid list", arr => {
+            let ids = Object.values(arr[0]).filter(_id => _id !== id);
+            let callingids = Object.keys(arr[1]).filter(_id => _id !== id);
+            $(".list").innerHTML = dom(ids, callingids);
+        });
+
+        $(".list").onclick = event => {
+            if (event.target.tagName === "BUTTON") {
+                //判断是否在通话中
+                if (event.target.getAttribute("disabled")) {
+                    alert("您呼叫的用户正在视频通话中");
+                    return;
+                }
+                //获取id
+                let _id = event.target.getAttribute("data-id");
+                //请求通话
+                socket.emit("call", {call: id, answer: _id});
+                //显示遮罩
+                $(".cover").style.display = "flex";
+                $(".call-id").innerHTML = _id;
+            }
+        }
+        // });
+        
+    </script>
+</body>
+</html>
