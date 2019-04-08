@@ -55,11 +55,11 @@
             border: 1px solid #fafafa;
         }
     </style>
-    <script src="./vconsole.min.js"></script>
+    <!-- <script src="./vconsole.min.js"></script> -->
     <script src="./recorder.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
     <script>
-        new VConsole();
+        // new VConsole();
     </script>
 </head>
 
@@ -89,13 +89,13 @@
         let answer_id = getQueryString("answer_id") || "receiver";
         const peer = new Peer(call_id, {
             debug: 3, 
-            host: '120.78.221.14', 
+            host: '10.20.201.195', 
             port: 9000, 
             path: '/myapp',
             config: {
                 "iceServers": [
                     {urls: "stun:stun1.l.google.com:19302"},
-                    {urls: "turn:120.78.221.14:3478", "username": "gw666", "credential": "123456"}
+                    // {urls: "turn:120.78.221.14:3478", "username": "gw666", "credential": "123456"}
                 ]
             },
         });
@@ -103,19 +103,15 @@
             let localStream;
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({
-                    video: true,
+                    video: {
+                        width: 1280, 
+                        height: 720
+                    },
                     audio: true
                 });
-                // let localAudioTrack = localStream.getAudioTracks()[0];
                 document.querySelector('video#local').srcObject = localStream
                 const call = peer.call(answer_id, localStream)
                 call.on('stream', remoteStream => {
-                    // remoteStream.addTrack(localAudioTrack);
-                    //打印远程视频流的配置
-                    // let videoTrack = remoteStream.getVideoTracks()[0];
-                    // let audioTrack = remoteStream.getAudioTracks()[0];
-                    // let settings = videoTrack.getSettings();
-                    // console.log("配置信息", JSON.stringify(settings));
                     //对传过来的视频进行保存
                     new Recorder({
                         startBtn: ".record",
@@ -129,6 +125,11 @@
                 console.log("err.name", err.name);
                 console.log("err.code", err.code);
                 console.log("err.message", err.message);
+                console.log("err.__proto__", err.__proto__);
+                // console.log("err", err.SecurityError);
+                // console.log("err", err.NotFoundError);
+                // console.log("err", err.AbortError);
+                // console.log("err", err.NotAllowedError);
             }
         }
         startChat();

@@ -56,9 +56,6 @@
             <video id="local" autoplay muted playsinline></video>
         </div>
     </div>
-    <!-- <div class="front">
-        <button class="jt">切换摄像头</button>
-    </div> -->
     <script>
         //获取URL参数
         const getQueryString = (name) => {
@@ -71,49 +68,34 @@
         let answer_id = getQueryString("answer_id") || "receiver";
         const peer = new Peer(answer_id, {
             debug: 2, 
-            host: '120.78.221.14', 
+            host: '10.20.201.195', 
             port: 9000, 
             path: '/myapp',
             config: {
                 "iceServers": [
                     {urls: "stun:stun1.l.google.com:19302"},
-                    {urls: "turn:120.78.221.14:3478", "username": "gw666", "credential": "123456"}
+                    // {urls: "turn:120.78.221.14:3478", "username": "gw666", "credential": "123456"}
                 ]
             }
             
         });
         peer.on("connection", () => {
             console.log("connection");
-        });
-        const getLocalStream = async (options = {
-            // video: { 
-            //     // facingMode: { 
-            //     //     exact: "environment" 
-            //     // } 
-            //     width: 1080,
-            //     height: 720
-            // },
-            video: true,
-            audio: true,
             
-        }) => {
-            return await navigator.mediaDevices.getUserMedia(options);
-        }
+        });
         peer.on('call', call => {
             console.log("接收到信息流");
             const startChat = async () => {
                 let localStream;
                 try {
-                    // localStream = await navigator.mediaDevices.getUserMedia({
-                    //     video: true,
-                    //     audio: true
-                    // });
-                    localStream = await getLocalStream();
+                    localStream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            width: 1280, 
+                            height: 720
+                        },
+                        audio: true
+                    });
                     console.log("本地信息流", localStream);
-                    //打印本地视频流的配置
-                    let videoTrack = localStream.getVideoTracks()[0];
-                    let settings = videoTrack.getSettings();
-                    console.log("配置信息", JSON.stringify(settings));
                     
                     document.querySelector('video#local').srcObject = localStream
                     call.answer(localStream)
@@ -122,15 +104,12 @@
                         document.querySelector('video#remote').srcObject = remoteStream
                     });
                 } catch (err) {
-                    // console.log("err", err);
-                    console.log("err.name", err.name);
-                    console.log("err.code", err.code);
-                    console.log("err.message", err.message);
+                    console.log("err", err);
                     // alert(JSON.stringify(err));
                 }
             }
-            startChat();
-        });
+            startChat()
+        })
     </script>
 
 </body>
