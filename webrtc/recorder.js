@@ -2,14 +2,19 @@ class Recorder {
     constructor(options) {
         this.chunks = [];
         this.recorder = this.getInstance(options);
-        this.initClickEvent(options);
-        this.initListenerEvent();
+        if (this.recorder) {
+            this.initClickEvent(options);
+            this.initListenerEvent();
+        }
     }
     $(selector) {
         return document.querySelector(selector);
     }
     getInstance(options) {
         const {stream} = options;
+        if (typeof MediaRecorder === "undefined") {
+            return null;
+        }
         return new MediaRecorder(stream);
     }
     initClickEvent(options) {

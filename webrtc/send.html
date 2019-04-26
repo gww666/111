@@ -57,7 +57,8 @@
     </style>
     <script src="./vconsole.min.js"></script>
     <script src="./recorder.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script> -->
+    <script src="./peer.min.js"></script>
     <script>
         new VConsole();
     </script>
@@ -89,7 +90,8 @@
         let answer_id = getQueryString("answer_id") || "receiver";
         const peer = new Peer(call_id, {
             debug: 3, 
-            host: '120.78.221.14', 
+            host: 'www.xswl.ltd', 
+            // host: '120.78.221.14', 
             port: 9000, 
             path: '/myapp',
             config: {

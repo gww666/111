@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <input type="radio" value="1" class="c1" name="searchType">1
+    <input type="radio" value="2" class="c2" name="searchType">2
+    <input type="radio" value="3" class="c3" name="searchType">3
+    <script>
+        /**
+         * 选择器比如 .test 或者 #test
+         * 单个元素传入一个selector，多个元素传入一个数组[".test"]
+         */
+        const checked = (selector) => {
+            if (typeof selector === "string") {
+                selector = [selector];
+            }
+            selector.forEach(s => {
+                //移除name属性
+                let el = document.querySelector(s);
+                el.removeAttribute("name");
+                el.setAttribute("checked", true);
+                el.setAttribute("disabled", true);
+            });
+        }
+        //初始化选择事件
+        const initRadioClickEvent = () => {
+            const radios = Array.from(document.querySelectorAll("input[name=searchType]"));
+            const reset = () => {
+                radios.forEach(_radio => {
+                    _radio.removeAttribute("checked");
+                    _radio.checked = false;
+                });
+            }
+            radios.forEach(radio => {
+                radio.addEventListener("click", () => {
+                    if (radio.getAttribute("checked")) {
+                        reset();
+                    } else {
+                        reset();
+                        radio.setAttribute("checked", true);
+                        radio.checked = true;
+                    }
+                }, false);
+            });
+        }
+        const ajax = () => {
+            //设置回显选中
+            checked(".c3");
+        }
+        
+        initRadioClickEvent();
+        ajax();
+    </script>
+</body>
+</html>
