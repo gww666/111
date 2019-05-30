@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <select id="sl">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+    <p class="pre"></p>
+    <script>
+        let sl = document.querySelector("#sl");
+        let pre = document.querySelector(".pre");
+        sl.onchange = (e) => {
+            let tem = `你选择的是${e.target.value}`;
+            pre.innerHTML = tem;
+        }
+    </script>
+</body>
+</html>

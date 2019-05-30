@@ -10,6 +10,8 @@
     <script src="./vconsole.min.js"></script>
     <script>
         new VConsole();
+        console.log("新的");
+        
     </script>
     <style>
         * {
@@ -84,6 +86,7 @@
 </head>
 
 <body>
+    <a href="https://www.baidu.com" class="link">123</a>
     <div class="box" style="display: none;">
         <p class="id-text">your id: <span class="id"></span></p>
         <div class="list"></div>
@@ -98,6 +101,14 @@
         const $ = (selector) => {
             return document.querySelector(selector);
         }
+        const link = (url) => {
+            let a = $(".link");
+            a.setAttribute("href", url);
+            a.click();
+        }
+        // setTimeout(() => {
+        //     link("https://www.baidu.com");
+        // }, 2000);
         //生成5位随机数
         const random = (count = 5) => {
             // 随机生成一个id
@@ -206,7 +217,9 @@
                     socket.emit("accept", obj);
                     //跳转到receiver页面
                     // location.href = `https://120.78.221.14/receiver.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`;
-                    location.href = `receiver.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`;
+                    // location.href = `receiver.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`;
+                    // location.href = `https://www.xswl.ltd/webrtc/receiver.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`;
+                    link(`https://www.xswl.ltd/webrtc/receiver.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`);
                     // location.href = "https://120.78.221.14/receiver.html?mid=" + obj.answer;
 
                 } else {
@@ -223,7 +236,9 @@
                 $(".cover").style.display = "none";
                 //跳往send页面
                 // location.href = `https://120.78.221.14/send.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`;
-                location.href = `send.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`;
+                // location.href = `send.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`;
+                link(`https://www.xswl.ltd/webrtc/send.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`);
+                // location.href = `https://www.xswl.ltd/webrtc/send.html?call_id=${obj.call.id}&answer_id=${obj.answer.id}`;
                 // }
             });
 

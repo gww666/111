@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .b1 {
+            width: 300px;
+            height: 300px;
+            border: 2px solid red;
+        }
+
+        .b2 {
+            width: 50px;
+            height: 50px;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="b1"></div>
+    <div class="b2"></div>
+    <script>
+        let b1 = document.querySelector(".b1");
+        let b2 = document.querySelector(".b2");
+        b1.ondragover = e => {
+            e.preventDefault();
+            
+        }
+        b1.ondrop = e => {
+            console.log("放置区域接收到元素");
+            let data = e.dataTransfer.getData("drag");
+            console.log(data);
+            
+        }
+        //赋予一个dom具备原生drag事件
+        class NativeDrag {
+            constructor(dom, options = {}) {
+                this.dom = dom;
+                this.options = Object.assign({}, options);
+                this.init();
+            }
+            init() {
+                let dom = this.dom;
+                dom.setAttribute("draggable", true);
+                dom.ondragstart = e => {
+                    e.dataTransfer.setData("drag", JSON.stringify({id: 1}));
+                    console.log("开始拖拽");
+                }
+            }
+        }
+        new NativeDrag(b2);    
+    </script>
+</body>
+</html>
