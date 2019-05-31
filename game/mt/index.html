@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        .bg {
+            background: #667399;
+            display: block;
+        }
+        .btn {
+            width: 100%;
+            text-align: center;
+            height: 30px;
+            background: greenyellow;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="bg">
+
+    </canvas>
+    <div class="btn">stop</div>
+</body>
+<script>
+const $ = (selector) => {
+    return document.querySelector(selector);
+}
+
+const $$ = (selector) => {
+    return Array.from(document.querySelectorAll(selector));
+}
+
+const loadImg = (url) => {
+    return new Promise(resolve => {
+        let img = new Image();
+        img.onload = () => resolve(img);
+        img.src = url;
+    });
+}
+
+let bg = $(".bg");
+let ctx = bg.getContext("2d");
+let w = document.documentElement.offsetWidth;
+let h = document.documentElement.offsetHeight;
+bg.width = w;
+bg.height = h;
+let wood = null;
+
+//绘制底座的木头
+const drawBasicWood = () => {
+    // let wood = await loadImg("./images/m.png");
+    // ctx.shadowBlur 设置阴影的模糊级别 
+    // ctx.shadowOffsetX 设置形状与阴影的水平距离。 
+    // ctx.shadowOffsetY 设置形状与阴影的垂直距离。 
+    // ctx.shadowColor 设置阴影的颜色
+    let bottom = h - wood.height - 20;
+    let left = (w - wood.width) / 2;
+    
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 5;
+    ctx.shadowColor = "#000";
+    ctx.shadowBlur = 5;
+    ctx.drawImage(wood, left, bottom);
+}
+
+//绘制滑动的木头
+let left = 0;
+let left2right = true;
+let woodCount = 2;//默认为1，因为有底座
+const drawSlideWood = () => {
+    // woodCount++;
+    // let wood = await loadImg("./images/m.png");
+    let bottom = h - (wood.height * woodCount) - (20 * woodCount);
+    // let 
+    if (left2right) {
+        left += 1.2;
+        if (left > w - wood.width) {
+            left -= 1.2;
+            left2right = false;
+        }
+    } else {
+        left -= 1.2;
+        if (left < 0) {
+            left += 1.2;
+            left2right = true;
+        }
+    }
+    ctx.drawImage(wood, left, bottom);
+}
+
+//以动画的形式向下走完20px
+let downAnimId = null;
+drawDownWoodBottom = 0;
+const drawDownWood = () => {
+    ctx.clearRect(0, 0, w, h);
+    drawBasicWood();
+    //拿到第woodCount个的木头的坐标
+    let _left = left;
+    let originBottom = h - (wood.height * woodCount) - (20 * woodCount);
+    // drawDownWoodBottom = originBottom;
+    drawDownWoodBottom += 3;
+    if (drawDownWoodBottom < originBottom + 20) {
+        ctx.drawImage(wood, _left, drawDownWoodBottom);
+        //继续向下落的动画
+        downAnimId = requestAnimationFrame(drawDownWood);
+        
+    } else {
+        ctx.drawImage(wood, _left, originBottom + 20);
+        //停止动画
+        console.log("停止向下落的动画");
+        window.cancelAnimationFrame(downAnimId);
+    }
+    // else {
+        
+    // }
+    
+}
+
+let animId = null;
+const draw = () => {
+    ctx.clearRect(0, 0, w, h);
+    drawBasicWood();
+    drawSlideWood();
+    animId = requestAnimationFrame(draw);
+    // console.log("id2", id2);
+}
+
+const init = async () => {
+    wood = await loadImg("./images/m.png");
+    drawDownWoodBottom = h - (wood.height * woodCount) - (20 * woodCount);
+    animId = requestAnimationFrame(draw);
+}
+
+init();
+
+
+let btn = $(".btn");
+btn.onclick = () => {
+    //停止平移
+    window.cancelAnimationFrame(animId);
+    //落下去
+    downAnimId = requestAnimationFrame(drawDownWood);
+}
+// draw();
+</script>
+</html>

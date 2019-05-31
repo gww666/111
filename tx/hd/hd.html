@@ -30,45 +30,75 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: perspective(500px) translate3d(-50%, -50%, 0) scale(1);
             box-shadow: 0 0 10px #999;
             /* flex-shrink: 0; */
         }
-        
-        .box .left {
-            left: -1%;
-            transform: translateX(0) translateY(-50%) scale(0.9);
+        .box .c1 {
+            z-index: 3;
         }
-        .box .mid {
+        .box .c2 {
             z-index: 2;
+            transform: perspective(500px) translate3d(-37%, -50%, 0) scale(0.9);
         }
-        .box .right {
-            left: unset;
-            right: -1%;
-            transform: translateX(0) translateY(-50%) scale(0.9);
+        
+        .box .c3 {
+            z-index: 1;
+            transform: perspective(500px) translate3d(-24%, -50%, 0) scale(0.8);
         }
-        .left2left {
-            animation: left2left 0.5s;
+        .c12left {
+            animation: c12left 0.5s;
             animation-fill-mode: forwards;
         }
-        @keyframes left2left {
+        @keyframes c12left {
             from {
-                transform: translateX(0) translateY(-50%) scale(0.9);
+                transform: perspective(500px) translate3d(-50%, -50%, 0) scale(0.9);
             }
             to {
-                transform: translateX(-100%) translateY(-50%) scale(0.9);
+                transform: perspective(500px) translate3d(-63%, -50%, 0) scale(0.8);
+                z-index: 2;
             }
         }
-        /* .box .left, .box .right {
-            transform: scale(0.8);
-        } */
+
+        .c22left {
+            animation: c22left 0.5s;
+            animation-fill-mode: forwards;
+        }
+        @keyframes c22left {
+            from {
+                
+                
+                transform: perspective(500px) translate3d(-37%, -50%, 0) scale(1);
+                /* left: 50%; */
+            }
+            to {
+                
+                transform: perspective(500px) translate3d(-50%, -50%, 0) scale(0.9);
+                /* left: -39%; */
+                z-index: 3;
+            }
+        }
+        .c32left {
+            animation: c32left 0.5s;
+            animation-fill-mode: forwards;
+        }
+        @keyframes c32left {
+            from {
+                transform: perspective(500px) translate3d(-24%, -50%, 0) scale(1);
+            }
+            to {
+                transform: perspective(500px) translate3d(-37%, -50%, 0) scale(1);
+                /* z-index: 3; */
+            }
+        }
     </style>
 </head>
 <body>
     <div class="box">
-        <div class="left"></div>
-        <div class="mid"></div>
-        <div class="right"></div>
+        <!-- <div class="left"></div> -->
+        <div class="c1"></div>
+        <div class="c2"></div>
+        <div class="c3"></div>
     </div>
 </body>
 <script src="./index.js"></script>

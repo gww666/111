@@ -26,9 +26,9 @@ const removeClass = (el, className) => {
     el.setAttribute("class", className);
 }
 
-let left = $(".left");
-let mid = $(".mid");
-let right = $(".right");
+let c1 = $(".c1");
+let c2 = $(".c2");
+let c3 = $(".c3");
 //初始化事件
 let items = $$(".box>div");
 items.forEach((item, index) => {
@@ -49,7 +49,9 @@ items.forEach((item, index) => {
             console.log("向左滑动");
             //left运动
             // left.
-            addClass(left, "left2left");
+            addClass(c1, "c12left");
+            addClass(c2, "c22left");
+            addClass(c3, "c32left");
             
         } else {
             console.log("向右滑动");
