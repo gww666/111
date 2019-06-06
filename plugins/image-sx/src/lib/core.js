@@ -49,9 +49,12 @@ class Compress {
     }
     async compress() {
         let file = this.file;
+        console.log("type", file.type);
+        
         let options = this.options;
         let canvas = document.createElement("canvas");
         let ctx = canvas.getContext("2d");
+        let mime = file.type || "image/png";
         let url = this.createObjectURL(file);
         let img = await this.createImg(url);
         //计算绘制区域的宽高
@@ -64,7 +67,7 @@ class Compress {
         return new Promise(resolve => {
             canvas.toBlob(blob => {
                 resolve(blob);
-            }, "image/png", options.quality);
+            }, mime, options.quality);
         });
     }
 

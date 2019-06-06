@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        .bg {
+            background: #667399;
+            display: block;
+        }
+        .btn {
+            width: 100%;
+            text-align: center;
+            height: 30px;
+            background: greenyellow;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="bg" width="375" height="667"></canvas>
+    <script>
+        let canvas = document.querySelector(".bg");
+        let ctx = canvas.getContext("2d");
+        const loadImg = (url) => {
+        return new Promise(resolve => {
+            let img = new Image();
+            img.onload = () => resolve(img);
+                img.src = url;
+            });
+        }
+        const init = async () => {
+            let img = await loadImg("./images/m.png");
+            ctx.drawImage(img, 200, 0, 25, img.height, 0, 0, 25, img.height);
+        }
+        init();
+    </script>
+</body>
+</html>

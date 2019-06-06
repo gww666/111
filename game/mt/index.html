@@ -51,81 +51,182 @@ const loadImg = (url) => {
 
 let bg = $(".bg");
 let ctx = bg.getContext("2d");
-let w = document.documentElement.offsetWidth;
-let h = document.documentElement.offsetHeight;
+let w = document.documentElement.offsetWidth;//屏幕宽度
+let h = document.documentElement.offsetHeight;//屏幕高度
 bg.width = w;
 bg.height = h;
 let wood = null;
+//根据数组进行页面绘制
+let woodArray = [];
 
 //绘制底座的木头
 const drawBasicWood = () => {
-    // let wood = await loadImg("./images/m.png");
     // ctx.shadowBlur 设置阴影的模糊级别 
     // ctx.shadowOffsetX 设置形状与阴影的水平距离。 
     // ctx.shadowOffsetY 设置形状与阴影的垂直距离。 
     // ctx.shadowColor 设置阴影的颜色
-    let bottom = h - wood.height - 20;
-    let left = (w - wood.width) / 2;
+    // let bottom = h - wood.height - 20;
+    // let left = (w - wood.width) / 2;
     
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 5;
     ctx.shadowColor = "#000";
     ctx.shadowBlur = 5;
-    ctx.drawImage(wood, left, bottom);
+    woodArray.forEach(item => {
+        let {left, top, width, height} = item;
+        ctx.drawImage(wood, left, top, width, height);
+    });
 }
 
 //绘制滑动的木头
-let left = 0;
+let left = 0;//代表滑动的木头的水平位置偏移量
 let left2right = true;
-let woodCount = 2;//默认为1，因为有底座
 const drawSlideWood = () => {
-    // woodCount++;
-    // let wood = await loadImg("./images/m.png");
-    let bottom = h - (wood.height * woodCount) - (20 * woodCount);
-    // let 
+    let width = woodArray[woodArray.length - 1].width;
+    let height = woodArray[woodArray.length - 1].height;
+    let bottom = h - (wood.height * (woodArray.length + 1)) - 20 * 2;
+    let unit = 1 + (woodArray.length * 0.2);
     if (left2right) {
-        left += 1.2;
-        if (left > w - wood.width) {
-            left -= 1.2;
+        left += unit;
+        if (left > w - width) {
+            left -= unit;
             left2right = false;
         }
     } else {
-        left -= 1.2;
+        left -= unit;
         if (left < 0) {
-            left += 1.2;
+            left += unit;
             left2right = true;
         }
     }
-    ctx.drawImage(wood, left, bottom);
+    ctx.drawImage(wood, left, bottom, width, height);
 }
 
 //以动画的形式向下走完20px
 let downAnimId = null;
-drawDownWoodBottom = 0;
+drawDownWoodTop = 0;
 const drawDownWood = () => {
     ctx.clearRect(0, 0, w, h);
     drawBasicWood();
-    //拿到第woodCount个的木头的坐标
+
     let _left = left;
-    let originBottom = h - (wood.height * woodCount) - (20 * woodCount);
-    // drawDownWoodBottom = originBottom;
-    drawDownWoodBottom += 3;
-    if (drawDownWoodBottom < originBottom + 20) {
-        ctx.drawImage(wood, _left, drawDownWoodBottom);
+    let originTop = woodArray[woodArray.length - 1].top;
+    drawDownWoodTop += 2;
+
+    
+    if (drawDownWoodTop <= originTop - 20) {
+        let width = woodArray[woodArray.length - 1].width;
+        let height = woodArray[woodArray.length - 1].height;
+        ctx.drawImage(wood, _left, drawDownWoodTop, width, height);
         //继续向下落的动画
         downAnimId = requestAnimationFrame(drawDownWood);
         
     } else {
-        ctx.drawImage(wood, _left, originBottom + 20);
+        let lastWoodLeft = woodArray[woodArray.length - 1].left;
+        let lastWoodWidth = woodArray[woodArray.length - 1].width;
+        let startSlice = woodArray[woodArray.length - 1].startSlice;
+        let height = wood.height;
+        //切割的木头向下走的动画所需的参数
+        let params = {};
+        if ((_left +lastWoodWidth)  < lastWoodLeft || _left > (lastWoodLeft + lastWoodWidth)) {
+            //游戏结束
+            console.log("游戏结束");
+            return window.cancelAnimationFrame(downAnimId);
+        } else if (left > lastWoodLeft) {
+            let width = lastWoodWidth - (left - lastWoodLeft);
+            //代表是后长
+            ctx.drawImage(wood, _left, originTop - wood.height, width, height);
+            //追加到数组中去
+            woodArray.push({
+                left: _left,
+                top: originTop - wood.height,
+                width,
+                height,
+                startSlice
+            });
+            //切掉的部分以动画下滑一下
+            params = {
+                mode: "end",
+                width: _left - lastWoodLeft,
+                height: wood.height,
+                sx: lastWoodWidth - (left - lastWoodLeft) + startSlice,
+                sy: 0,
+                top: originTop - wood.height,
+                left: lastWoodWidth + lastWoodLeft,
+            }
+            
+        } else if (left < lastWoodLeft) {
+            let width = lastWoodWidth - (lastWoodLeft - left);
+            //代表是前长
+            ctx.drawImage(wood, lastWoodLeft, originTop - wood.height, width, height);
+            //追加到数组中去
+            woodArray.push({
+                left: lastWoodLeft,
+                top: originTop - wood.height,
+                width,
+                height,
+                startSlice: (lastWoodLeft - left) + startSlice
+            });
+            params = {
+                mode: "front",
+                width: lastWoodLeft - _left,
+                height: wood.height,
+                sx: (lastWoodLeft - left) + startSlice,
+                sy: 0,
+                top: originTop - wood.height,
+                left: _left,
+            }
+        } else {
+            //完美放置
+            console.log("完美放置");
+            
+        }
         //停止动画
         console.log("停止向下落的动画");
         window.cancelAnimationFrame(downAnimId);
-    }
-    // else {
+        drawDownWoodTop = woodArray[woodArray.length - 1].top - 20 - woodArray[woodArray.length - 1].height;
+        //开启切割木头的下滑动画
+        sliceAnimId = requestAnimationFrame(sliceAnim.bind(null, params));
+        // window.cancelAnimationFrame(downAnimId);
         
-    // }
-    
+        
+    }
 }
+
+//被切掉的木头向下走的动画
+let sliceAnimId = null;
+let sliceWoodDown = 0;
+const sliceAnim = (params) => {
+    // console.log("切割的木头向下落");
+    ctx.clearRect(0, 0, w, h);
+    drawBasicWood();
+    
+    let {
+        mode,
+        width,
+        height,
+        sx,
+        sy,
+        top,
+        left
+    } = params;
+    
+    // requestAnimationFrame(params)
+    sliceWoodDown = sliceWoodDown === 0 ? top : sliceWoodDown;
+    sliceWoodDown += 2;
+    // console.log("sliceWoodDown", sliceWoodDown);
+    // console.log("top + 20", top + 20);
+    if (sliceWoodDown <= top + 20) {
+        ctx.drawImage(wood, sx, sy, width, height, left, sliceWoodDown, width, height);
+        sliceAnimId = requestAnimationFrame(sliceAnim.bind(null, params));
+    } else {
+        window.cancelAnimationFrame(sliceAnimId);
+        sliceWoodDown = 0;
+        //开启新的滑动木头的动画
+        animId = requestAnimationFrame(draw);
+    }
+}
+
 
 let animId = null;
 const draw = () => {
@@ -137,8 +238,16 @@ const draw = () => {
 }
 
 const init = async () => {
+    //加载资源图片
     wood = await loadImg("./images/m.png");
-    drawDownWoodBottom = h - (wood.height * woodCount) - (20 * woodCount);
+    woodArray.push({
+        left: (w - wood.width) / 2,
+        top: h - wood.height - 20,
+        width: wood.width,
+        height: wood.height,
+        startSlice: 0
+    });
+    drawDownWoodTop = woodArray[woodArray.length - 1].top - 20 - woodArray[woodArray.length - 1].height;
     animId = requestAnimationFrame(draw);
 }
 
@@ -151,6 +260,8 @@ btn.onclick = () => {
     window.cancelAnimationFrame(animId);
     //落下去
     downAnimId = requestAnimationFrame(drawDownWood);
+    // //判断完美放置，还是前长或后长
+    // sliceAnim();
 }
 // draw();
 </script>

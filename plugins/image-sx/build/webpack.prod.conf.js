@@ -6,7 +6,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "../dist"),
         filename: "image-sx.js",
-        library: 'imaghe-sx',
+        library: 'image-sx',
         libraryTarget: 'umd'
     },
     module: {
