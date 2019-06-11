@@ -1,20 +1,24 @@
 <template>
     <div class="image-sx-box">
         <!-- 预览的盒子 -->
-        <!-- <div class="preview-box"> -->
         <div 
             class="preview-box"
             v-for="(item, index) in previewUrlArray" 
             :key="'preview-' + index"
-            :style="{width, height}">
+            :style="{width, height}"
+            :ref="'preview' + index"
+            @mouseover="showHandle(index)"
+            @mouseout="hideHandle(index)">
             <img :src="item" alt="" @load="loadedEvent(index)">
+            <div class="handle-box">
+                <span @click="deleteImgData(index)">删 除</span>
+            </div>
         </div>
-        <div class="add-box" :style="{width, height}">
+        <div class="add-box" :style="{width, height}" v-show="previewUrlArray.length < maxCount">
             <div></div>
             <div></div>
             <input type="file" accept="image/*" @change="fileChange">
         </div>
-        <!-- </div> -->
     </div>
     
 </template>
@@ -38,6 +42,7 @@ export default {
             type: String,
             default: "data"
         },
+        //压缩阙值，单位：kb；大于此值会进行压缩
         maxSize: {
             type: Number,
             default: 300
@@ -55,11 +60,22 @@ export default {
         compressQuality: {
             type: Number,
             default: 0.4
+        },
+        //已有的图片链接
+        imgUrls: {
+            type: Array,
+            default: () => ([])
+        },
+        //上传的最大数量
+        maxCount: {
+            type: Number,
+            default: 5
         }
+
     },
     data() {
         return {
-            previewUrlArray: [],
+            previewUrlArray: [...this.imgUrls],
             //储存file对象的数组(二进制数据)
             uploadFileArray: []
         }
@@ -76,48 +92,86 @@ export default {
             });
         },
         async fileChange(event) {
-            console.log(event);
+            // console.log(event);
             //拿到文件
             let file = event.target.files[0];
             if (file) {
-                console.log(file.size);
+                // console.log(file.size);
                 let url = null;
                 let originBlob = null;
                 //300kb以上进行压缩
                 if (file.size / 1024 > this.maxSize) {
-                    console.log("开始压缩");
+                    // console.log("开始压缩");
                     let instance = new Compress(file, {
                         quality: this.compressQuality,
                         maxWidth: this.compressWidth,
                         maxHeight: this.compressHeight
                     });
                     originBlob = await instance.compress();
-                    console.log("originBlob", originBlob);
+                    // console.log("originBlob", originBlob);
+                    console.log("压缩后的体积", (originBlob.size / 1024) + "KB");
                     url = window.URL.createObjectURL(originBlob);
                 } else {
                     console.log("不需要压缩");
+                    // console.log("value", value);
                     originBlob = file;
+                    //获取其MD5值
+                    let value = await this.md5(originBlob);
+                    originBlob.md5 = value;
                     url = window.URL.createObjectURL(file);
                 }
-                //获取其MD5值
-                let value = await this.md5(originBlob);
-                // console.log("value", value);
-                originBlob.md5 = value;
                 if (this.mode === "preview") {
                     this.previewUrlArray.push(url);
                     this.uploadFileArray.push(originBlob);
-                    //调用父组件事件
+                    //向父组件发送事件
                     this.$emit("fileChange", this.uploadFileArray);
                 } else if (this.mode === "data") {
-                    //调用父组件事件
+                    //向父组件发送事件
                     this.$emit("fileChange", originBlob);
                 }
                 event.target.value = "";
             }
         },
         loadedEvent(index) {
-            console.log("第" + index + "个图片加载完成");
+            // console.log("第" + index + "个图片加载完成");
             window.URL.revokeObjectURL(this.previewUrlArray[index]);
+        },
+        //对图片预览盒子进行操作
+        showHandle(index) {
+            // console.log("ref", this.$refs);
+            
+            this.$refs["preview" + index][0].querySelector(".handle-box").style.opacity = "0.5";
+            // document.querySelectorAll(".preview-box")[index].querySelector(".handle-box").style.opacity = "0.5";
+        },
+        hideHandle(index) {
+            this.$refs["preview" + index][0].querySelector(".handle-box").style.opacity = "0";
+            // document.querySelectorAll(".preview-box")[index].querySelector(".handle-box").style.opacity = "0";
+        },
+        deleteImgData(index) {
+            //假设传入预览图片数据的话，这里需要排除
+            let length = this.imgUrls.length;
+            //先删除预览数组的数据
+            this.previewUrlArray.splice(index, 1);
+            // console.log("index", index);
+            // console.log("length", length);
+            
+            //删除上传数据的数组
+            if (index >= length) {
+                //说明删除的是新添加的图片
+                this.uploadFileArray.splice(index - length, 1);
+                this.$emit("fileChange", this.uploadFileArray);
+            } else {
+                //删除的是回显的照片
+                this.imgUrls.splice(index, 1);
+                this.$emit("previewFileChange", this.previewUrlArray);
+            }
+        }
+    },
+    watch: {
+        imgUrls(newVal) {
+            if (newVal && newVal.length) {
+                this.previewUrlArray = [...newVal];
+            }
         }
     }
 }
@@ -133,11 +187,31 @@ export default {
         // display: flex;
         // flex-wrap: wrap;
         margin: 0 10px 10px 0;
+        position: relative;
         
         img {
             width: 100%;
             height: 100%;
             border: 1px dashed #ddd;
+        }
+        .handle-box {
+            transition: all 0.3s;
+            background: rgb(0, 0, 0);
+            opacity: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            span {
+                color: white;
+                font-size: 14px;
+                cursor: pointer;
+            }
         }
     }
     .add-box {
