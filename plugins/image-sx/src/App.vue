@@ -2,11 +2,13 @@
 	<div id="app">
 		<image-x @fileChange="fileChange" mode="preview" :imgUrls="imgs"></image-x>
 		<image-x @fileChange="fileChange" mode="preview" :imgUrls="imgs"></image-x>
+		<image-x-mobile @fileChange="fileChange" mode="preview"></image-x-mobile>
 	</div>
 </template>
 
 <script>
 import ImageX from "./lib/index.vue";
+import ImageXMobile from "./lib/mobile.vue";
 export default {
 	name: "app",
 	data() {
@@ -20,7 +22,8 @@ export default {
 		}
 	},
 	components: {
-		ImageX
+		ImageX,
+		ImageXMobile
 	},
 	mounted() {
 		setTimeout(() => {

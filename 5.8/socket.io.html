@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.bootcss.com/socket.io/2.2.0/socket.io.slim.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const socket = io("http://120.78.221.14:2233");
+        //连接成功后或重连后，告诉服务端
+        socket.on("connect", () => {
+            console.log("connect");
+            socket.emit("join", "2");
+        });
+        socket.on("orderChange", (data) => {
+            console.log("data", data);
+        });
+        socket.on("reply", (data) => {
+            console.log("reply", data);
+            // if (info) {
+            //     $(".id").innerHTML = info.nickname;
+            //     socket.emit("create id", info);
+            // }
+        });
+    </script>
+</body>
+</html>
