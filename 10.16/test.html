@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title></title>
+    <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+</head>
+<body>
+    <script>
+        
+        // let ajax = () => {
+        //     // axios.post("http://10.20.201.232:3344/tes/uploadData", {});
+        //     let xhr = new XMLHttpRequest();
+        //     xhr.open("get", "http://10.20.201.232:3344/tes/uploadData", false);
+        //     xhr.send(null);
+        // }
+        // window.onbeforeunload = () => {
+        //     ajax();
+        // }
+        // window.addEventListener("pageHide", () => {
+        //     console.log("11111");
+        //     alert("1121");
+        // }, false);
+        let obj1 = {
+            a: 1
+        }
+        let obj2 = {
+            a: 2
+        }
+        let test = function() {
+            console.log("a", this.a);
+        }
+        // obj1.fn = test.bind(obj2);
+        // obj1.fn();
+        // test.bind(obj2)();
+        let fn = test.bind(obj2);
+        fn();
+    </script>
+</body>
+</html>

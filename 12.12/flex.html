@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 300px;
+            height: 100px;
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .i1 {
+            flex: 1;
+            /* flex-basis: 0; */
+            background: blue;
+            height: 100%;
+            outline: none;
+            border: 0;
+            padding: 0;
+        }
+        .i2 {
+            flex: 1;
+            /* flex-basis: 0; */
+            height: 100%;
+            background: red;
+            margin-left: 20px;
+        }
+        .flex-2 {
+            display: flex;;
+            width: 400px;
+            margin-top: 20px;
+        }
+        .b1 {
+            width: 100px;
+            background: yellow;
+        }
+        .b2 {
+            width: 300px;
+            height: 100px;
+            background: pink;
+        }
+    </style>
+</head>
+<body>
+    <!-- <div class="box">
+        <button class="i1">已有顾问，详细咨询</button>
+        <div class="i2">立即申请</div>
+    </div> -->
+    <div class="flex-2">
+        <span class="b1"></span>
+        <div class="b2"></div>
+    </div>
+</body>
+</html>

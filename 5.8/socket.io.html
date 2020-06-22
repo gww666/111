@@ -9,22 +9,22 @@
 </head>
 <body>
     <script>
-        const socket = io("http://120.78.221.14:2233");
+        // const socket = io("http://120.78.221.14:2237");
+        // const socket = io("https://120.78.221.14:2237");
+        const socket = io("https://www.xswl.ltd:2237");
         //连接成功后或重连后，告诉服务端
         socket.on("connect", () => {
             console.log("connect");
-            socket.emit("join", "2");
+            socket.emit("join");
+
+            socket.on("priceChange", (data) => {
+                console.log("data", data);
+            });
         });
-        socket.on("orderChange", (data) => {
-            console.log("data", data);
-        });
-        socket.on("reply", (data) => {
-            console.log("reply", data);
-            // if (info) {
-            //     $(".id").innerHTML = info.nickname;
-            //     socket.emit("create id", info);
-            // }
-        });
+        
+        // socket.on("reply", (data) => {
+        //     console.log("reply", data);
+        // });
     </script>
 </body>
 </html>

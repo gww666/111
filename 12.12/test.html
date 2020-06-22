@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // let html = "<div><img data-src='asdas' src='https://mmbiz.qpic.cn/mmbiz_jpg/K1QTs69PnJRT4QrZSiarENObgHeeTvRa49whNqx0ALjxGsNXO2T2t3OsPwCLu4ydQApoib3XNpPGBppsykBc3NMA/640?wx_fmt=jpeg' /></div>";
+        let html = '<img class="" data-ratio="0.765" data-src="https://mmbiz.qpic.cn/mmbiz_png/K1QTs69PnJRT4QrZSiarENObgHeeTvRa4ib1sc9Fa0P6f4Zo6G5SB4KJ3GeapkSrOMj9WOJmNxg0GOcaictsgcxbQ/640?wx_fmt=png" data-type="png" data-w="1000" style="vertical-align: middle; box-sizing: border-box; width: 677px !important; height: auto !important; visibility: visible !important;" _width="677px" src="https://mmbiz.qpic.cn/mmbiz_png/K1QTs69PnJRT4QrZSiarENObgHeeTvRa4ib1sc9Fa0P6f4Zo6G5SB4KJ3GeapkSrOMj9WOJmNxg0GOcaictsgcxbQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" crossorigin="anonymous" data-fail="0">';
+        let reg = /src\=\"[\.\w\/\?=:;&]+\"/g;
+        // let reg = /src=/;
+        html = html.replace(reg, "src='/wechat_image2/K1QTs69PnJRT4QrZSiarENObgHeeTvRa49whNqx0ALjxGsNXO2T2t3OsPwCLu4ydQApoib3XNpPGBppsykBc3NMA/640?wx_fmt=jpeg'")
+        // html = html.replace(/^img$/, "test")
+        console.log(html);
+        // let r = html.match(reg);
+        // console.log("r", r);
+        
+        
+    </script>
+</body>
+</html>

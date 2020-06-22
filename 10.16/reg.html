@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var myAtoi = function(str) {
+            let max = Math.pow(2, 31) - 1;
+            let min = Math.pow(-2, 31);
+            let reg = /^[+-]?\d+/;
+            if (!reg.test(str)) return 0;
+            let num = Number(str.match(reg)[0]);
+            if (num > max) return max;
+            if (num < min) return min;
+            return num;
+            // console.log(num);
+        };
+        let test = "-4193 with words";
+        let res = myAtoi(test);
+        console.log(res);
+        
+
+    </script>
+</body>
+</html>

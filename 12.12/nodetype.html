@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nodeType</title>
+</head>
+<body>
+    <div class="t1">
+        <br />
+        这是一段话
+    </div>
+    <script>
+        let $ = (selector) => {
+            return document.querySelector(selector);
+        }
+        let t1 = $(".t1");
+        console.log(t1.children);
+        console.log(t1.childElementCount);
+        let value = t1.firstChild.nodeValue;
+        if (value.trim()) {
+            console.log("nodeValue", value);
+            
+        }
+        console.log("firstElementChild", t1.firstElementChild);
+        
+        console.log(t1.firstChild.nodeValue);
+        console.log(t1.lastChild.nodeValue.trim());
+    </script>
+</body>
+</html>

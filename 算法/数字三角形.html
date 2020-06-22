@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        {
+            let test = [[5], [7, 6], [2, 9, 11]];
+            const maxValue = (arr) => {
+                let n = arr.length - 1;
+                let i = 0;
+                let j = 0;
+                let cache = {};
+
+                let getMaxValue = (arr, n, _i, _j) => {
+                    if (n === _i) {
+                        return arr[_i][_j];
+                    } else if (cache[arr[_i][_j]]) {
+                        
+                        
+                        return cache[arr[_i][_j]];
+                    }
+                    let x = getMaxValue(arr, n, _i + 1, _j);
+                    let y = getMaxValue(arr, n, _i + 1, _j + 1);
+                    return Math.max(x, y) + arr[_i][_j];
+                }
+                
+                let max = getMaxValue(arr, n, 0, 0);
+                return max;
+            }    
+            let res = maxValue(test);
+            console.log("res", res);
+        }
+        {
+            let test = [[-7],[-2,1],[-5,-5,9],[-4,-5,4,4],[-6,-6,2,-1,-5],[3,7,8,-3,7,-9],[-9,-1,-9,6,9,0,7],[-7,0,-6,-8,7,1,-4,9],[-3,2,-6,-9,-7,-6,-9,4,0],[-8,-6,-3,-9,-2,-6,7,-5,0,7],[-9,-1,-2,4,-2,4,4,-1,2,-5,5],[1,1,-6,1,-2,-4,4,-2,6,-6,0,6],[-3,-3,-6,-2,-6,-2,7,-9,-5,-7,-5,5,1]];
+            var minimumTotal = function(triangle) {
+                let n = triangle.length - 1;
+                let i = 0;
+                let j = 0;
+                let cache = {};
+
+                let getMinValue = (triangle, n, _i, _j) => {
+                    if (n === _i) {
+                        return triangle[_i][_j];
+                    } else if (cache[`${_i},${_j}`] !== undefined) {
+                        console.log("有该值, 不再递归");
+                        return cache[`${_i},${_j}`];
+                    }
+                    let x = getMinValue(triangle, n, _i + 1, _j);
+                    let y = getMinValue(triangle, n, _i + 1, _j + 1);
+                    let temp = Math.min(x, y) + triangle[_i][_j];
+                    cache[`${_i},${_j}`] = temp;
+                    return temp;
+                }
+                
+                let min = getMinValue(triangle, n, 0, 0);
+                console.log("cache", cache);
+                
+                return min;
+            };
+            let min = minimumTotal(test);
+            console.log("min", min);
+        }
+        
+        
+    </script>
+</body>
+</html>

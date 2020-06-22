@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    {
+        var fourSum = function(nums, target) {
+            if (nums.length < 4) return [];
+            nums.sort((m, n) => m - n);
+            console.log("nums", nums);
+            
+            let result = [];
+            for (let i = 0; i < nums.length - 3; i++) {
+                if (i > 0 && nums[i] === nums[i - 1]) continue;
+                for (let j = i + 1; j < nums.length - 2; j++) {
+                    if (j > i + 1 && nums[j] === nums[j - 1]) continue;
+                    let l = j + 1;
+                    let r = nums.length - 1;
+                    while (l < r) {
+                        let sum = nums[i] + nums[j] + nums[l] + nums[r];
+                        if (sum > target && nums[i] > 0) return result;
+                        if (sum === target) {
+                            result.push([nums[i], nums[j], nums[l], nums[r]]);
+                            while (l < r && nums[l] === nums[l + 1]) l++;
+                            while (l < r && nums[r] === nums[r - 1]) r--;
+                            l++;
+                            r--;
+                        } else if (sum < target) {
+                            
+                            l++;
+                        } else {
+                            
+                            r--;
+                        }
+                    }
+                }
+            }
+            return result;
+        };
+        let res = fourSum([0,-7,-2,8,-7,8,3,-8,7,5,-7,3,6,-8,8,-2,4], 19);
+        // let res = threeSum([-1, 0, 1, 2, -1, -4]);
+        console.log("打印结果", res);
+    }    
+    </script>
+</body>
+</html>

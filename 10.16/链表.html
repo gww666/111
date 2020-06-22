@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //什么是链表
+        class LinkedList {
+            constructor() {
+                this.head = null;
+                this.length = 0;
+            }
+            createNode(element) {
+                return {
+                    val: element,
+                    next: null
+                }
+            }
+            //向链表末尾添加一个元素
+            append(element) {
+                let node = this.createNode(element);
+                if (this.head === null) {
+                    this.head = node;
+                } else {
+                    let current = this.head;
+                    while (current.next) {
+                        current = current.next;
+                    }
+                    current.next = node;
+                }
+                this.length += 1;
+            }
+            //向指定位置插入一个元素
+            insert(position, element) {
+                //判断了位置信息
+                if (position < 0 && position >= this.length) {
+                    return;
+                }
+                let node = this.createNode(element);
+                if (position === 0) {
+                    this.head = node;
+                } else {
+                    let i = 0;
+                    let current = this.head;
+                    let prev = null;
+                    while (i < position) {
+                        prev = current;
+                        current = current.next;
+                        i++;
+                    }
+                    prev.next = node;
+                    node.next = current;
+                }
+                this.length += 1;
+            }
+            removeAt(position) {
+                if (position < 0 && position >= this.length) {
+                    return;
+                }
+                let current = this.head;
+                if (position === 0) {
+                    this.head = null;
+                } else {
+                    let i = 0;
+                    let current = this.head;
+                    let prev = null;
+                    while (i < position) {
+                        prev = current;
+                        current = current.next;
+                        i++;
+                    }
+                    prev.next = current.next;
+                    current = null;
+                }
+                this.length -= 1;
+            }
+        }
+
+        const createLinkedList = (arr) => {
+            const link = new LinkedList();
+            arr.forEach(item => {
+                link.append(item);
+            });
+            return link;
+        }
+        const link = new LinkedList();
+        let arr = [1, 2, 3, 4, 5];
+        arr.forEach(item => {
+            link.append(item);
+        });
+        
+        link.removeAt(3);
+
+        link.insert(3, "test");
+        console.log("link.head", link.head);
+
+        function ListNode(val) {
+            this.val = val;
+            this.next = null;
+        }
+
+        var addTwoNumbers = function(l1, l2) {
+            let carry = 0;
+            let returnNode = new ListNode(null);
+            let current = returnNode;
+            while (l1 || l2) {
+                console.log("while");
+                
+                let val1 = l1 ? l1.val : 0;
+                let val2 = l2 ? l2.val : 0;
+                let sum = val1 + val2 + carry;
+
+                //当前位数是余数
+                current.next = new ListNode(sum % 10);
+                //如果进位了，就赋值给carry，便于下次计算
+                carry = Math.floor(sum / 10);
+
+                if (l1) l1 = l1.next;
+                if (l2) l2 = l2.next;
+                current = current.next;
+            }
+            if (carry) current.next = new ListNode(carry)
+            return returnNode.next;
+        };
+        let l1 = createLinkedList([2, 4, 3]);
+        // console.log("l1", l1);
+        
+        let l2 = createLinkedList([5, 6, 4]);
+        let res = addTwoNumbers(l1.head, l2.head);
+        console.log("res", res);
+    </script>
+</body>
+</html>

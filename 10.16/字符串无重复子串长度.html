@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    {
+        function hasRepeatStr(s) {
+            let map = {};
+            for (let i = 0; i < s.length; i++) {
+                if (map[s.charAt(i)]) {
+                    return true;
+                } else {
+                    map[s.charAt(i)] = 1;
+                } 
+            }
+        }
+        var lengthOfLongestSubstring = function(s) {
+            let max = 0;
+            for (let i = 0; i < s.length; i++) {
+                for (let j = i + 1; j <= s.length; j++) {
+                    let str = s.slice(i, j);
+                    if (str.length === 1) {
+                        max = Math.max(max, 1);
+                    } else {
+                        if (!hasRepeatStr(str)) {
+                            max = Math.max(max, str.length);
+                        }
+                    }
+                    
+                }
+            }
+            return max;
+        };
+        let len = lengthOfLongestSubstring("pwwkew");
+        // console.log("res", len);
+    }
+    {
+        var lengthOfLongestSubstring = function(s) {
+            let max = 0;
+            let win = "";
+            for (let n of s) {
+                if (win.indexOf(n) === -1) {
+                    win += n;
+                    max = Math.max(max, win.length);
+                } else {
+                    win += n;
+                    win = win.slice(win.indexOf(n) + 1);
+                }
+            }
+            // console.log("max", max);
+            return max;
+        };
+        let len = lengthOfLongestSubstring("pwwkew");
+        // console.log("res", len);
+    }
+    {
+        function ishw(s) {
+            let temp = s.split("").reverse().join("");
+            return temp === s;
+        }
+        var longestPalindrome = function(s) {
+            let n = "";
+            let res = "";
+            for (let i = 0; i <= s.length; i++) {
+                let restRes = s.slice(i);
+                let win = "";
+                for (n of restRes) {
+                    win += n;
+                    if (win[0] === win[win.length - 1]) {
+                        if (ishw(win)) {
+                            res = win.length > res.length ? win : res;
+                        }
+                    }
+                }
+            }
+            return res;
+        };
+        let test = "whdqcudjpisufnrtsyupwtnnbsvfptrcgvobbjglmpynebblpigaflpbezjvjgbmofejyjssdhbgghgrhzuplbeptpaecfdanhlylgusptlgobkqnulxvnwuzwauewcplnvcwowmbxxnhsdmgxtvbfgnuqdpxennqglgmspbagvmjcmzmbsuacxlqfxjggrwsnbblnnwisvmpwwhomyjylbtedzrptejjsaiqzprnadkjxeqfdpkddmbzokkegtypxaafodjdwirynzurzkjzrkufsokhcdkajwmqvhcbzcnysrbsfxhfvtodqabvbuosxtonbpmgoemcgkudandrioncjigbyizekiakmrfjvezuzddjxqyevyenuebfwugqelxwpirsoyixowcmtgosuggrkdciehktojageynqkazsqxraimeopcsjxcdtzhlbvtlvzytgblwkmbfwmggrkpioeofkrmfdgfwknrbaimhefpzckrzwdvddhdqujffwvtvfyjlimkljrsnnhudyejcrtrwvtsbkxaplchgbikscfcbhovlepdojmqybzhbiionyjxqsmquehkhzdiawfxunguhqhkxqdiiwsbuhosebxrpcstpklukjcsnnzpbylzaoyrmyjatuovmaqiwfdfwyhugbeehdzeozdrvcvghekusiahfxhlzclhbegdnvkzeoafodnqbtanfwixjzirnoaiqamjgkcapeopbzbgtxsjhqurbpbuduqjziznblrhxbydxsmtjdfeepntijqpkuwmqezkhnkwbvwgnkxmkyhlbfuwaslmjzlhocsgtoujabbexvxweigplmlewumcone";
+        let res = longestPalindrome(test);
+        // console.log(ishw("a"));
+        console.log(res);
+    }
+    {
+        var longestPalindrome = function(s) {
+            let res = "";
+            let centerExpand = (left, right) => {
+                let flag = false;
+                while (left >= 0 && right < s.length && s[left] === s[right]) {
+                    flag = true;
+                    left--;
+                    right++;
+                }
+                return {flag, left: left + 1, right};
+            }
+            // if (s.length <= 1) {
+            //     res = s;
+            // } 
+            // else if (s.length === 2) {
+            //     res = s[0] === s[1] ? s : s[0];
+            // } 
+            // else {
+                for (let i = 0; i < s.length; i++) {
+                    let odd = "";
+                    let even = "";
+                    let index = null;
+                    let max = "";
+                    if (s[i] === s[i + 1]) {
+                        // console.log("even", s[i], s[i + 1]);
+                        
+                        index = centerExpand(i - 1, i + 2);
+                        
+                        
+                        // if (index.flag) {
+                        even = s.slice(index.left, index.right);
+                        // }
+                        // console.log("even-index", index);
+                        // console.log("even", even);
+                    }
+                    index = centerExpand(i - 1, i + 1);
+                    // if (index.flag) {
+                        odd = s.slice(index.left, index.right);
+                    // }
+                    // console.log("odd", odd);
+                    
+                    max = odd.length > even.length ? odd : even;
+                    res = res.length > max.length ? res : max;
+                }
+            // }
+            return res;
+        };
+        // let test = "whdqcudjpisufnrtsyupwtnnbsvfptrcgvobbjglmpynebblpigaflpbezjvjgbmofejyjssdhbgghgrhzuplbeptpaecfdanhlylgusptlgobkqnulxvnwuzwauewcplnvcwowmbxxnhsdmgxtvbfgnuqdpxennqglgmspbagvmjcmzmbsuacxlqfxjggrwsnbblnnwisvmpwwhomyjylbtedzrptejjsaiqzprnadkjxeqfdpkddmbzokkegtypxaafodjdwirynzurzkjzrkufsokhcdkajwmqvhcbzcnysrbsfxhfvtodqabvbuosxtonbpmgoemcgkudandrioncjigbyizekiakmrfjvezuzddjxqyevyenuebfwugqelxwpirsoyixowcmtgosuggrkdciehktojageynqkazsqxraimeopcsjxcdtzhlbvtlvzytgblwkmbfwmggrkpioeofkrmfdgfwknrbaimhefpzckrzwdvddhdqujffwvtvfyjlimkljrsnnhudyejcrtrwvtsbkxaplchgbikscfcbhovlepdojmqybzhbiionyjxqsmquehkhzdiawfxunguhqhkxqdiiwsbuhosebxrpcstpklukjcsnnzpbylzaoyrmyjatuovmaqiwfdfwyhugbeehdzeozdrvcvghekusiahfxhlzclhbegdnvkzeoafodnqbtanfwixjzirnoaiqamjgkcapeopbzbgtxsjhqurbpbuduqjziznblrhxbydxsmtjdfeepntijqpkuwmqezkhnkwbvwgnkxmkyhlbfuwaslmjzlhocsgtoujabbexvxweigplmlewumcone";
+        let test = "ac";
+        // let test = "aaa";
+        // let test = "aabb";
+        // let test = "sfabasfvcrrcjhnm";
+        // let test = "jabbalj";
+        let res = longestPalindrome(test);
+        // console.log(ishw("a"));
+        console.log(res);
+    }
+    
+    </script>
+</body>
+</html>

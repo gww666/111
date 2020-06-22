@@ -14,14 +14,15 @@
                 <span @click="deleteImgData(index)">删 除</span>
             </div>
         </div>
-        <div class="add-box" :style="{width, height}" v-show="previewUrlArray.length < maxCount">
+        <div v-if="!addSlot" class="add-box" :style="{width, height}" v-show="previewUrlArray.length < maxCount">
             <div></div>
             <div></div>
             <div class="add-box-cover" @click="showPopupWindow"></div>
-            <input type="file" accept="image/*" @change="fileChange" class="file-input">
         </div>
-        <div class="menu-box">
-            <div class="content-box">
+        <input ref="fileInput" type="file" @change="fileChange" class="file-input" />
+        <slot name="add" v-bind:addProps="addProps"></slot>
+        <div class="menu-box" ref="menuBox">
+            <div class="content-box" ref="contentBox">
                 <div class="file-box">
                     <span v-if="origin === 'all' || origin === 'album'"
                         @click="selectFile('album')">
@@ -92,13 +93,22 @@ export default {
         maxCount: {
             type: Number,
             default: 5
+        },
+        slotName: {
+            type: String | Array,
+            default: ""
         }
     },
     data() {
         return {
             previewUrlArray: [...this.imgUrls],
             //储存file对象的数组(二进制数据)
-            uploadFileArray: []
+            uploadFileArray: [],
+            addSlot: true,
+            addProps: {
+                text: "test",
+                click: this.showPopupWindow
+            }
         }
     },
     methods: {
@@ -189,34 +199,48 @@ export default {
             }
         },
         showPopupWindow() {
-            
-            let popupWindow = document.querySelector(".menu-box");
+            let popupWindow = this.$refs.menuBox;
             popupWindow.style.display = "flex";
-            let contentBox = document.querySelector(".content-box");
+            let contentBox = this.$refs.contentBox;
             setTimeout(() => {
                 contentBox.style.transform = "translateY(0)";
-            }, 0);
+            }, 17);
         },
         hidePopupWindow() {
-            let popupWindow = document.querySelector(".menu-box");
-            let contentBox = document.querySelector(".content-box");
+            let popupWindow = this.$refs.menuBox;
+            let contentBox = this.$refs.contentBox;
             contentBox.style.transform = "translateY(100%)";
             popupWindow.style.display = "none";
         },
         selectFile(type) {
-            let input = document.querySelector(".file-input");
+            let input = this.$refs.fileInput;
             if (type === "album") {
+                input.removeAttribute("accept");
                 input.removeAttribute("capture");
             } else if (type === "camera") {
+                input.setAttribute("accept", "image/*");
                 input.setAttribute("capture", "camera");
             }
             input.click();
         },
     },
+    created() {
+    },
+    mounted() {
+    },
     watch: {
         imgUrls(newVal) {
             if (newVal && newVal.length) {
                 this.previewUrlArray = [...newVal];
+            }
+        },
+        slotName(newVal) {
+            if (newVal) {
+                if (this.slotName === "add") {
+                    this.addSlot = true;
+                } else {
+                    this.addSlot = false;
+                }
             }
         }
     }
@@ -319,6 +343,7 @@ export default {
         justify-content: center;
         align-items: flex-end;
         display: none;
+        z-index: 1;
 
         .content-box {
             width: 92%;
@@ -351,7 +376,10 @@ export default {
         }
 
     }
-    
+    .file-input {
+        width: 0;
+        height: 0;
+    }
 }
 </style>
 

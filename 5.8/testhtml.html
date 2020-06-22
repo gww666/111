@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let dom = `测试
+<a href="http://localhost/agent/homeStart.html#/referee">链接
+					
+                </a>测试6666`;
+        let box = document.createElement("div");
+        box.insertAdjacentHTML("beforeend", dom);
+        let text = box.querySelector("a").innerText;
+        console.log("box", box);
+        console.log("text", text.trim());
+        console.log("text", text.trim().length);
+    </script>
+</body>
+</html>
