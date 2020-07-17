@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="input"><button id="btn">转换</button>
+    <script src="队列.js"></script>
+    <script>
+        /**
+         * 对于栈来说，只要抓住它最主要个一个特征：后进先出，就很容易用代码实现出来了。
+         */
+        class Stack {
+            constructor() {
+                this.save = [];
+            }
+            add(el) {
+                this.save.push(el);
+            }
+            get() {
+                return this.save.pop();
+            }
+            peek() {
+                return this.save[0];
+            }
+            isEmpty() {
+                return this.save.length === 0;
+            }
+        }
+        class Stack2 {
+            constructor() {
+                this.queue1 = getQueue();
+                this.queue2 = getQueue();
+            }
+            add(item) {
+                if (this.queue1.isEmpty()) {
+                    console.log("add");
+                    
+                    this.queue2.add(item);
+                } else {
+                    this.queue1.add(item);
+                }
+                // console.log("add", item, this.queue2);
+            }
+            get() {
+                /**
+                 * 要取到队列最后添加的一个元素，即满足栈的后进先出的原则
+                 */
+                if (this.queue1.isEmpty()) {
+                    while (this.queue2.size() > 1) {
+                        this.queue1.add(this.queue2.get());
+                    }
+                    return this.queue2.get();
+                } else if (this.queue2.isEmpty()) {
+                    while (this.queue1.size() > 1) {
+                        this.queue2.add(this.queue1.get());
+                    }
+                    return this.queue1.get();
+                }
+            }
+            isEmpty() {
+                return this.queue1.isEmpty() && this.queue2.isEmpty();
+            }
+        }
+
+        //实现进制转换
+        function change(originVal, base) {
+            // let stack = new Stack();
+            let stack = new Stack2();
+            // let rem = originVal % 2;
+            // let res = Math.floor(originVal / 2);
+            // console.log("res", res);
+            // console.log("rem", rem);
+            
+            // stack.add(rem);
+            let digits = "0123456789ABCDEF";
+            while (originVal) {
+                let rem = originVal % base;
+                originVal = Math.floor(originVal / base);
+                console.log("originVal", originVal);
+                console.log("rem", rem);
+                stack.add(rem);
+            }
+            console.log(stack);
+            
+            let value = "";
+            while(!stack.isEmpty()) {
+                value += digits[stack.get()];
+            }
+            return value;
+        }
+        let btn = document.querySelector("#btn");
+        btn.onclick = () => {
+            let val = document.querySelector("#input").value;
+            console.log(change(val, 2));
+        }
+    </script>
+</body>
+</html>

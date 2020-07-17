@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./链表.js"></script>
+</head>
+<body>
+    
+    <script>
+        const linkList = new LinkList();
+        // linkList.add(1);
+        // linkList.add(2);
+        // linkList.add(3);
+        // linkList.remove(2);
+        // linkList.add(4);
+        // console.log(linkList.getHead());
+        for (let i = 0; i < 1000; i++) {
+            linkList.add(i);
+        }
+        
+        //反转链表
+        // const reverse = () => {
+        //     let head = linkList.getHead();
+        //     if (!head || !head.next) return head;
+        //     let current = null;
+        //     // let next = null;
+        //     let previous = null;
+        //     console.log("head", head);
+            
+        //     while (head) {
+        //         let next = head.next;
+        //         // console.log("next", next);
+                
+        //         head.next = previous;
+        //         // console.log("next", next);
+        //         previous = head;
+        //         head = next;
+        //     }
+        //     return previous;
+        // }
+        
+        // console.log(reverse());
+
+        //创建一个带环链表
+        let list2 = new LinkList();
+        list2.add(1);
+        list2.add(2);
+        list2.add(3);
+        list2.add(4);
+        list2.add(5);
+        let current = list2.getHead();
+        let i = 0;
+        let entry = null;
+        while (i++ < list2.length) {
+            // console.log(i);
+            
+            if (i === 2) {
+                entry = current;
+            }
+            
+            current = current.next;
+            if (i === 4) {
+                current.next = entry;   
+            }
+        }
+        // console.log(list2.getHead());
+        // //双指针法判断是否有环
+        // let slow = list2.getHead();
+        // let fast = list2.getHead();
+        // // let current = list2.getHead();
+        // let meet = null;
+        // let hasCircle = false;
+        // while (fast) {
+        //     slow = slow.next;
+        //     if (!slow) {
+        //         console.log("没有环");
+        //         break;
+        //     };
+        //     fast = fast.next.next;
+        //     if (!fast) {
+        //         break;
+        //         console.log("没有环");
+        //     };
+        //     if (fast === slow) {
+        //         meet = fast;
+        //         hasCircle = true;
+        //         console.log("找到相遇点");
+        //         break;
+        //     } 
+        // }
+        // if (hasCircle) {
+        //     //fast指针，从头开始走
+        //     fast = list2.getHead();
+        //     while (fast !== slow) {
+        //         fast = fast.next;
+        //         slow = slow.next;
+        //     }
+        //     console.log("入口点为", fast);
+        // }
+
+        //双指针法判断某链表是否有环
+        //2020.7.14
+        const test = () => {
+            // console.log("test", test);
+            let fast = list2.getHead();
+            let slow = list2.getHead();
+            // console.log("fast", fast);
+            
+            // if (fast === slow) return console.log("0")
+            let hasCircle = false;
+            while (fast) {
+                console.log("进入循环");
+                slow = slow.next;
+                // if (!slow) {
+                //     console.log("0");
+                //     break;
+                // }
+                if (!fast.next) {
+                    console.log("0");
+                    break;
+                }
+                fast = fast.next.next;
+                if (!fast) {
+                    console.log("0");
+                    break;
+                }
+                if (fast === slow) {
+                    console.log("1");
+                    hasCircle = true; 
+                    break;
+                }
+            }
+            if (hasCircle) {
+                fast = list2.getHead();
+                while (fast !== slow) {
+                    fast = fast.next;
+                    slow = slow.next;
+                }
+                console.log("meet", fast);
+            }
+        }
+        // test();
+
+        //反转链表
+        //2020.7.15
+        const test2 = () => {
+            let previous = null;
+            let next = linkList.getHead();
+            while (next) {
+                let temp = next.next;
+                next.next = previous;
+                previous = next;
+                next = temp;
+            }
+            // console.log("reverse", linkList);
+            console.log("previous", previous);
+            return previous;
+        }
+        // test2();
+        
+    </script>
+</body>
+</html>

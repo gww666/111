@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./decimal.js"></script>
+</head>
+<body>
+    <div class="box">点击事件</div>
+    <script>
+        let a = 0.1;
+        let b = 0.2;
+        console.log(a + b);
+        let c = new Decimal(0.1);
+        // console.log("c", c);
+        
+        let d = new Decimal(0.2);
+        console.log(c.add(d).valueOf());
+        // console.log(new Decimal(0.046875));
+        // console.log(new Decimal(1.046875).truncated());
+        console.log(new Decimal(1.046875).valueOf());
+        // console.log("decimal", new Decimal("12.1"));
+        console.log(12.1 + 12.2);
+        console.log(new Decimal(12.1).add(new Decimal(12.2)).valueOf());
+        console.log(new Decimal(12.1).add(new Decimal(12.2)).valueOf());
+        let box = document.querySelector(".box");
+        box.addEventListener("click", () => {console.log("点击事件");}, {once: true});
+        
+        
+        // console.log(Decimal.add(0.1 + 0.2));
+        
+        // let decimal = new Decimal();
+        // decimal.add(0.1 + 0.2);
+        let obj = {
+            a: 1,
+            get v() {
+                return this.a + 1;
+            }
+        }
+        console.log("getter", obj.getter());
+        
+    </script>
+</body>
+</html>

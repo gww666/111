@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./链表.js"></script>
+    <script>
+        const testTime = (cb, tag) => {
+            // let start = Date.now();
+            console.time(tag);
+            cb();
+            console.timeEnd(tag)
+        }
+        //生成一个测试数组
+        // let arr = [];
+        // let i = 10000;
+        // while (i--) {
+        //     // arr.push(parseInt(Math.random() * 10000));
+        //     arr.push({
+        //         name: "测试232dd222",
+        //         date: Date.now(),
+        //         count: parseInt(Math.random() * 10000)
+        //     });
+        // }
+        
+        
+        testTime(() => {
+            let arr2 = [1, 2, 3];
+            // console.log("arr");
+            
+            //执行10000次插入操作
+            for (let j = 0; j < 10000; j++) {
+                arr2.splice(2, 0, j);
+            }
+        }, "splice");
+
+        // let linkList = new LinkList();
+        // linkList.add(111);
+        // linkList.add(111);
+        // linkList.add(111);
+        let arrList = new LinkedList();
+        arrList.append(1);
+        arrList.append(2);
+        arrList.append(3);
+        testTime(() => {
+            //执行10000次插入操作
+            for (let j = 0; j < 10000; j++) {
+                arrList.insert(2, 0);
+            }
+        }, "linklist");
+        console.log("linklist", arrList.getHead());
+        
+        // let start = Date.now();
+        // //执行1000次插入操作
+        // for (let j = 0; j < 10000; j++) {
+        //     let index = parseInt(Math.random() * arr.length);
+        //     arr.splice(index, 0, parseInt(Math.random() * 10000));
+        // }
+        // console.log("消耗时间", Date.now() - start);
+        // console.log("arr", arr);
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const currencyNames = new Intl.DisplayNames(['zh-Hans'], {type: 'currency'});
+        console.log(currencyNames.of('CNY'));
+        currencyNames.of('USD');
+        // → '美元'
+        currencyNames.of('EUR');
+        // → '欧元'
+        currencyNames.of('JPY');
+        // → '日元'
+        
+    </script>
+</body>
+</html>

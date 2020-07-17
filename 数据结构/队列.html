@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./队列.js"></script>
+    <script src="./栈.js"></script>
+    <script>
+        // const getQueue = (() => {
+        //     /**
+        //      * 队列，特点是先进先出
+        //      */
+        //     class Queue {
+        //         constructor() {
+        //             this.items = [];
+        //         }
+        //         add() {
+        //             this.items.push();
+        //         }
+        //         get() {
+        //             return this.items.shift();
+        //         }
+        //     }
+        //     const hanlder = (target, property, receiver) => {
+        //         console.log("获取属性", property);
+        //         if (property === "items") {
+        //             return console.log("该属性为私有");
+        //         } else {
+        //             return target[property];
+        //         }
+        //     }
+        //     return () => {
+        //         return new Proxy(new Queue(), {
+        //             get: hanlder
+        //         });
+        //     }
+        // })();
+        //基于两个栈实现队列
+        class Queue2 {
+            constructor() {
+                this.stack1 = new Stack();
+                this.stack2 = new Stack();
+            }
+            add(item) {
+                // if ()
+                this.stack1.add(item);
+            }
+            get() {
+                if (this.stack2.isEmpty()) {
+                    //将add栈里的元素全部压入get栈
+                    //此时栈底元素刚好变为栈顶元素
+                    //符合队列的先进先出的原则
+                    while (!this.stack1.isEmpty()) {
+                        this.stack2.add(this.stack1.get());
+                    }
+                }
+                return this.stack2.get();
+            }
+        }
+        // let queue = getQueue();
+        let queue = new Queue2();
+        queue.add(1);
+        queue.add(2);
+        queue.add(3);
+        console.log("get", queue.get());
+        queue.add(4);
+        queue.add(5);
+        console.log("get", queue.get());
+        console.log("get", queue.get());
+        console.log("get", queue.get());
+        
+        // console.log("直接获取queue.items", queue.items);
+        // console.log("直接获取isEmpty()", queue.items);
+        
+    </script>
+</body>
+</html>
